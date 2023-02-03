@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Add API url
-        run: sed -i "s|API_URL.*|API_URL $API_URL|g" app.properties.js
+        run: |
+          sed -i "s|API_URL.*|API_URL: $API_URL,|g" app.properties.js
       - name: Build project with Yarn
         run: yarn install && yarn run build
       - uses: superfly/flyctl-actions/setup-flyctl@master

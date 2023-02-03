@@ -1,0 +1,21 @@
+name: Fly Deploy
+on:
+  push:
+    branches:
+      - main
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  API_URL: ${{ vars.API_URL }}
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Remove server port property
+        run: sed -i "s|API_URL.*|API_URL $API_URL|g" app.properties
+      - name: Build project with Yarn
+        run: yarn install && yarn run build
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only

@@ -5,7 +5,7 @@ export const movieColors = {
 };
 
 export const tvShowsColors = {
-  active: '#5e30ce',
+  active: '#405adf',
   inactive: '#9b9b9b',
   muiColor: 'secondary',
 };

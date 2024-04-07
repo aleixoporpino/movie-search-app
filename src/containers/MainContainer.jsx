@@ -17,8 +17,11 @@ import { getCountryListSelected, getCountryStreamingFormatted } from '../utils';
 import Menu from '../components/Menu';
 import { MenuContext } from '../contexts/MenuContext';
 import { ColorScheme } from '../shapes/MemberShape';
+import { UserContext } from '../contexts/UserContext';
+import { API_URL } from '../../app.properties';
 
 const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) => {
+  const { user, setUser } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
   const { menu, setMenu } = useContext(MenuContext);
   const [selectAll, setSelectAll] = useState(true);
@@ -83,6 +86,14 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
 
   useEffect(() => {
     const locationPathArr = location.pathname.split('/');
+
+    if (location.search && location.search.includes('token=')) {
+      const token = location.search.split('token=')[1];
+      localStorage.setItem('token', token);
+      window.location.href = '/movies';
+      return;
+    }
+
     if (
       locationPathArr.length > 1 &&
       (locationPathArr[1] === 'tv-shows' || locationPathArr[1] === 'movies')
@@ -136,9 +147,27 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
     setCountryStreamingFiltered(newFilteredArray);
   };
 
+  const handleLogin = () => {
+    // TODO: use some sort of env here
+    const apiUrl = `${API_URL}auth/google?token=${localStorage.getItem('token')}`;
+    window.location.href = apiUrl || `${window.location.origin}/${apiUrl}`;
+  };
+
+  const handleLogout = () => {
+    localStorage.setItem('token', '');
+    setUser({});
+  };
+
   return (
     <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
-      <Menu colorScheme={colorScheme} />
+      <Menu
+        colorScheme={colorScheme}
+        user={user}
+        handleLogin={handleLogin}
+        handleProfile={() => console.log('handle profile')}
+        handleWatchlist={() => console.log('handle watchlist')}
+        handleLogout={handleLogout}
+      />
       <Collapse in={showError}>
         <Alert
           severity='error'
@@ -157,6 +186,7 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
         label={searchInputLabel}
         colorScheme={colorScheme}
       />
+
       <Box sx={{ pt: 3 }} display='flex' justifyContent='center'>
         <Grid container spacing={{ xs: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
           {queryResult &&

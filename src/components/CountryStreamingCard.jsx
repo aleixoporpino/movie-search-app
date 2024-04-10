@@ -16,7 +16,7 @@ const CountryStreamingCard = ({ countryFlatrate, colorScheme }) => (
     <CardContent>
       <Box sx={{ textAlign: 'center', pb: 2 }}>
         <img
-          src={`https://flagcdn.com/48x36/${countryFlatrate.country.toLowerCase()}.png`}
+          src={`https://flagcdn.com/w40/${countryFlatrate.country.toLowerCase()}.png`}
           width='32'
           height='24'
           alt={CountryCodeEnum[countryFlatrate.country]}

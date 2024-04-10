@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,7 +13,11 @@ import SearchComponent from '../components/SearchComponent';
 import CountryFilter from '../components/CountryFilter';
 import MovieCard from '../components/MovieCard';
 import CountryStreamingCard from '../components/CountryStreamingCard';
-import { getCountryListSelected, getCountryStreamingFormatted } from '../utils';
+import {
+  getCountryStreamingFiltered,
+  getCountryListSelected,
+  getCountryStreamingFormatted,
+} from '../utils';
 import Menu from '../components/Menu';
 import { MenuContext } from '../contexts/MenuContext';
 import { ColorScheme } from '../shapes/MemberShape';
@@ -67,10 +71,18 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
     getById(id)
       .then((response) => {
         setStreaming(response.data);
-        const formattedCountryStreaming = getCountryStreamingFormatted(response.data);
-        setCountryListSelected(getCountryListSelected(formattedCountryStreaming));
-        setCountryStreaming(formattedCountryStreaming);
-        setCountryStreamingFiltered(formattedCountryStreaming);
+        const countriesStreaming = getCountryStreamingFormatted(response.data);
+        const selectedCountries = getCountryListSelected(countriesStreaming, user);
+        setCountryListSelected(selectedCountries);
+        setCountryStreaming(countriesStreaming);
+        const filteredCountryStreaming = getCountryStreamingFiltered(
+          countriesStreaming,
+          selectedCountries,
+        );
+        setCountryStreamingFiltered(filteredCountryStreaming);
+        if (filteredCountryStreaming.length !== Object.keys(selectedCountries).length) {
+          setSelectAll(false);
+        }
         setLoading(false);
         if (response.data && Object.entries(response.data.results).length === 0) {
           setShowEmptyMessage(true);
@@ -84,6 +96,17 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
     setQueryResult([]);
   };
 
+  const applyCountryFilter = () => {
+    setShowError(false);
+    const newFilteredArray = [];
+    countryStreaming.forEach((item) => {
+      if (countryListSelected[item.country]) {
+        newFilteredArray.push(item);
+      }
+    });
+    setCountryStreamingFiltered(newFilteredArray);
+  };
+
   useEffect(() => {
     const locationPathArr = location.pathname.split('/');
 
@@ -91,6 +114,7 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
       const token = location.search.split('token=')[1];
       localStorage.setItem('token', token);
       window.location.href = '/movies';
+      navigate('/movies');
       return;
     }
 
@@ -116,7 +140,7 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
       searchStreaming(id);
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [id, location.search]);
+  }, [id, location.search, user]);
 
   const onChangeCountry = (country) => {
     countryListSelected[country] = !countryListSelected[country];
@@ -136,17 +160,6 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
     applyCountryFilter();
   };
 
-  const applyCountryFilter = () => {
-    setShowError(false);
-    const newFilteredArray = [];
-    countryStreaming.forEach((item) => {
-      if (countryListSelected[item.country]) {
-        newFilteredArray.push(item);
-      }
-    });
-    setCountryStreamingFiltered(newFilteredArray);
-  };
-
   const handleLogin = () => {
     // TODO: use some sort of env here
     const apiUrl = `${API_URL}auth/google?token=${localStorage.getItem('token')}`;
@@ -164,8 +177,8 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
         colorScheme={colorScheme}
         user={user}
         handleLogin={handleLogin}
-        handleProfile={() => console.log('handle profile')}
-        handleWatchlist={() => console.log('handle watchlist')}
+        handleProfile={() => navigate('/profile')}
+        handleWatchlist={() => navigate('/watchlist')}
         handleLogout={handleLogout}
       />
       <Collapse in={showError}>

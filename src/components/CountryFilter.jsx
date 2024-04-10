@@ -15,13 +15,19 @@ const CountryFilter = ({
   onChangeCountry,
   onClickApplyCountryFilter,
   colorScheme,
+  showApplyFilter,
+  showSelectAll,
 }) => (
   <Box>
-    <FormControlLabel
-      control={<Checkbox onChange={() => onChangeSelectAll()} checked={selectAllValue} />}
-      label={selectAllValue ? 'Deselect all' : 'Select all'}
-      labelPlacement='end'
-    />
+    {showSelectAll ? (
+      <FormControlLabel
+        control={<Checkbox onChange={() => onChangeSelectAll()} checked={selectAllValue} />}
+        label={selectAllValue ? 'Deselect all' : 'Select all'}
+        labelPlacement='end'
+      />
+    ) : (
+      <></>
+    )}
     {countryList.map((item) => (
       <FormControlLabel
         key={item.country}
@@ -35,7 +41,7 @@ const CountryFilter = ({
               color='info'
             />
             <img
-              src={`https://flagcdn.com/16x12/${item.country.toLowerCase()}.png`}
+              src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
               width='16'
               height='12'
               alt={CountryCodeEnum[item.country]}
@@ -46,14 +52,18 @@ const CountryFilter = ({
         labelPlacement='end'
       />
     ))}
-    <Button
-      variant='outlined'
-      onClick={() => onClickApplyCountryFilter()}
-      color={colorScheme.muiColor}
-      size='small'
-    >
-      Apply filters
-    </Button>
+    {showApplyFilter ? (
+      <Button
+        variant='outlined'
+        onClick={() => onClickApplyCountryFilter()}
+        color={colorScheme.muiColor}
+        size='small'
+      >
+        Apply filters
+      </Button>
+    ) : (
+      <></>
+    )}
   </Box>
 );
 
@@ -63,8 +73,16 @@ CountryFilter.propTypes = {
   countryList: PropTypes.array.isRequired,
   countryListSelected: PropTypes.object.isRequired,
   onChangeCountry: PropTypes.func.isRequired,
-  onClickApplyCountryFilter: PropTypes.func.isRequired,
+  onClickApplyCountryFilter: PropTypes.func,
   colorScheme: PropTypes.shape(ColorScheme).isRequired,
+  showApplyFilter: PropTypes.bool,
+  showSelectAll: PropTypes.bool,
+};
+
+CountryFilter.defaultProps = {
+  showApplyFilter: true,
+  showSelectAll: true,
+  onClickApplyCountryFilter: () => {},
 };
 
 export default CountryFilter;

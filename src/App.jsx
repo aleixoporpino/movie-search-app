@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import Container from '@mui/material/Container';
@@ -13,11 +13,12 @@ import Footer from './components/Footer';
 import { tvShowsColors } from './utils/colorScheme';
 import { UserContext } from './contexts/UserContext';
 import { getUser } from './api/userApi';
+import UserProfilePage from './containers/UserProfilePage';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [menu, setMenu] = useState('movies');
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
@@ -34,17 +35,19 @@ function App() {
     if (token) {
       axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-      if (!user) {
+      if (!user.email > 0) {
         getUser()
           .then((response) => {
             setUser(response.data);
           })
           .catch(() => {
-            // TODO: show error to user
+            localStorage.setItem('token', '');
+            window.location.href = '/';
           });
       }
     }
   }, [user]);
+
   return (
     <LoadingContext.Provider value={{ loading, setLoading }}>
       <MenuContext.Provider value={{ menu, setMenu }}>
@@ -60,6 +63,7 @@ function App() {
                   <Route exact path='/movies/:id' element={<MoviesPage />} />
                   <Route exact path='/tv-shows' element={<TVShowsPage />} />
                   <Route exact path='/tv-shows/:id' element={<TVShowsPage />} />
+                  <Route exact path='/profile' element={<UserProfilePage user={user} />} />
                   <Route path='*' element={<NotFound />} />
                 </Routes>
               </Router>

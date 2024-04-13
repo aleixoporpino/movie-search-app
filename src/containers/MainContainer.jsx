@@ -23,6 +23,7 @@ import { MenuContext } from '../contexts/MenuContext';
 import { ColorScheme } from '../shapes/MemberShape';
 import { UserContext } from '../contexts/UserContext';
 import { API_URL } from '../../app.properties';
+import { saveWatchlist } from '../api/movieApi';
 
 const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) => {
   const { user, setUser } = useContext(UserContext);
@@ -51,12 +52,13 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
       getByName(name)
         .then((response) => {
           setLoading(false);
-          setQueryResult(response.data);
-          if (response.data && response.data.results.length === 0) {
+          setQueryResult(applyWatchlistMovies(response.data));
+          if (!response.data || !response.data.results || response.data.results.length === 0) {
             setShowEmptyMessage(true);
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           setShowError(true);
           setLoading(false);
         });
@@ -65,6 +67,37 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
       setCountryStreamingFiltered([]);
     }
   };
+
+  const applyWatchlistMovies = (data) => {
+    console.log(data);
+    const noUserWatchlist =
+      !user ||
+      !user.watchlist ||
+      !user.watchlist.movies ||
+      !user.watchlist.movies.length > 0 ||
+      !data ||
+      !data.results ||
+      !data.results.length > 0;
+    if (noUserWatchlist) {
+      return data;
+    }
+
+    const movieIdMap = {};
+    user.watchlist.movies.forEach((movie) => {
+      movieIdMap[movie.id] = movie.watchlist;
+    });
+
+    const updatedData = { ...data };
+    updatedData.results = [];
+    data.results.forEach((movie) => {
+      const updatedMovie = { ...movie };
+      updatedMovie.watchlist = !!movieIdMap[movie.id];
+      updatedData.results.push(updatedMovie);
+    });
+
+    return updatedData;
+  };
+
   const searchStreaming = (id) => {
     setShowError(false);
     setLoading(true);
@@ -171,6 +204,23 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
     setUser({});
   };
 
+  const onSelectWatchlist = (index) => {
+    const updatedResults = [...queryResult.results];
+    updatedResults[index] = {
+      ...updatedResults[index],
+      watchlist: !updatedResults[index].watchlist,
+    };
+    setQueryResult({ ...queryResult, results: updatedResults });
+    saveWatchlist(updatedResults[index])
+      .then(() => {
+        // TODO: Add Success message
+      })
+      .catch(() => {
+        // TODO: Add Error message
+        setShowError(true);
+      });
+  };
+
   return (
     <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
       <Menu
@@ -204,7 +254,7 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
         <Grid container spacing={{ xs: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
           {queryResult &&
             queryResult.results &&
-            queryResult.results.map((result) => (
+            queryResult.results.map((result, index) => (
               <Grid item xs={1} sm={3} md={3} key={result.id}>
                 <MovieCard
                   movieResult={result}
@@ -212,6 +262,8 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
                     setSelectedMovieName(name);
                     navigate(`/${menu}/${id}`);
                   }}
+                  onSelectWatchlist={() => onSelectWatchlist(index, result.watchlist)}
+                  showWatchlistIcon={!!user && !!user.email}
                 />
               </Grid>
             ))}

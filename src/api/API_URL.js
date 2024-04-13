@@ -7,6 +7,7 @@ export default {
   MOVIES: {
     DEFAULT: movies,
     BY_NAME: `${movies}name/`,
+    WATCHLIST: `${movies}watchlist`,
   },
   TV_SHOWS: {
     DEFAULT: tvShows,

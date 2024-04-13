@@ -28,30 +28,31 @@ const CountryFilter = ({
     ) : (
       <></>
     )}
-    {countryList.map((item) => (
-      <FormControlLabel
-        key={item.country}
-        control={
-          <>
-            <Checkbox
-              key={item.country}
-              checked={countryListSelected[item.country]}
-              onChange={() => onChangeCountry(item.country)}
-              name={item.country}
-              color='info'
-            />
-            <img
-              src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
-              width='16'
-              height='12'
-              alt={CountryCodeEnum[item.country]}
-            />
-          </>
-        }
-        label={item.country}
-        labelPlacement='end'
-      />
-    ))}
+    {countryList.length > 0 &&
+      countryList.map((item) => (
+        <FormControlLabel
+          key={item.country}
+          control={
+            <>
+              <Checkbox
+                key={item.country}
+                checked={!!countryListSelected[item.country]}
+                onChange={() => onChangeCountry(item.country)}
+                name={item.country}
+                color='info'
+              />
+              <img
+                src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
+                width='16'
+                height='12'
+                alt={CountryCodeEnum[item.country]}
+              />
+            </>
+          }
+          label={item.country}
+          labelPlacement='end'
+        />
+      ))}
     {showApplyFilter ? (
       <Button
         variant='outlined'

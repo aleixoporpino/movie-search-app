@@ -1,7 +1,7 @@
 import { api } from './api';
 import API_URL from './API_URL';
 
-export const getMovieById = (movieId) => {
+export const getMovieById = (movieId, name) => {
   const url = `${API_URL.MOVIES.DEFAULT}${movieId}`;
   return api.get(url);
 };

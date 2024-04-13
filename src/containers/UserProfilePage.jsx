@@ -39,8 +39,7 @@ const UserProfilePage = () => {
       return;
     }
 
-    if (user && user.email) {
-      console.log(user);
+    if (!userForm.email && user && user.email) {
       setUserForm((prevState) => ({
         ...prevState,
         firstName: user.firstName,
@@ -65,13 +64,12 @@ const UserProfilePage = () => {
         user.watchlist.countries.forEach((v) => {
           countryList[v] = true;
         });
-        console.log(countryList);
-        setCountryListSelected(countryList);
+        setCountryListSelected((prevState) => ({ ...prevState, ...countryList }));
       }
     }
 
     setCountries(Object.keys(CountryCodeEnum).map((it) => ({ country: it })));
-  }, [countryListSelected, user]);
+  }, [countryListSelected, user, userForm]);
 
   const onChangeText = (e) => {
     userForm[e.target.id] = e.target.value;
@@ -82,7 +80,6 @@ const UserProfilePage = () => {
   };
 
   const onChangeCheckBox = (e) => {
-    console.log(userForm, e.target.checked);
     userForm[e.target.id] = e.target.checked;
     setUserForm({
       ...userForm,
@@ -90,32 +87,31 @@ const UserProfilePage = () => {
   };
 
   const onChangeCountry = (country) => {
-    countryListSelected[country] = !countryListSelected[country];
-    setCountryListSelected(countryListSelected);
-    console.log('COUNTRY LIST SELECTED', countryListSelected);
+    const newCountryListSelected = { ...countryListSelected };
+    newCountryListSelected[country] = !newCountryListSelected[country];
+    setCountryListSelected(newCountryListSelected);
     const selectedCountries = [];
     countries.forEach((item) => {
-      if (countryListSelected[item.country]) {
+      if (newCountryListSelected[item.country]) {
         selectedCountries.push(item.country);
       }
     });
 
-    userForm.countries = selectedCountries;
-    console.log(selectedCountries);
-    setUserForm((prevState) => ({
-      ...prevState,
-      ...userForm,
-    }));
+    const updatedUserForm = { ...userForm };
+    updatedUserForm.countries = selectedCountries;
+    console.log(updatedUserForm.countries);
+    setUserForm(updatedUserForm);
   };
 
   const onClickSave = () => {
     console.log(userForm);
     saveUser(userForm)
       .then((r) => {
-        console.log('RESPONSE', r);
+        // TODO: Fix page refreshing
         setUser(r);
       })
       .catch((e) => {
+        // TODO: show error message
         console.error(e);
       });
   };
@@ -194,10 +190,7 @@ const UserProfilePage = () => {
                 label='Notify for Streaming'
               />
             </FormGroup>
-            {console.log('form')}
-            {console.log(countryListSelected)}
-            {console.log(countries)}
-            {user.watchlist.countries && countryListSelected ? (
+            {Object.keys(countryListSelected).length > 0 ? (
               <>
                 <Typography>Preferred Countries:</Typography>
                 <CountryFilter

@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CountryCodeEnum from '../utils/CountryCodeEnum';
 import { ColorScheme } from '../shapes/MemberShape';
+import JustWatchWidget from './JustWatchWidget';
 
 const CountryStreamingCard = ({ countryFlatrate, colorScheme }) => (
   <Card
@@ -40,6 +41,7 @@ const CountryStreamingCard = ({ countryFlatrate, colorScheme }) => (
           </Box>
         ))}
     </CardContent>
+    <JustWatchWidget country={countryFlatrate.country} />
   </Card>
 );
 CountryStreamingCard.propTypes = {

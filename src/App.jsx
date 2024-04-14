@@ -29,24 +29,22 @@ function App() {
     },
   });
 
-  // TODO: Move this to Main container
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  // TODO: Move this to Main container maybe
+  const token = localStorage.getItem('token');
+  if (token) {
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-      if (!user.email > 0) {
-        getUser()
-          .then((response) => {
-            setUser(response.data);
-          })
-          .catch(() => {
-            localStorage.setItem('token', '');
-            window.location.href = '/';
-          });
-      }
+    if (!user.email > 0) {
+      getUser()
+        .then((response) => {
+          setUser(response.data);
+        })
+        .catch(() => {
+          localStorage.setItem('token', '');
+          window.location.href = '/';
+        });
     }
-  }, [user]);
+  }
 
   return (
     <LoadingContext.Provider value={{ loading, setLoading }}>

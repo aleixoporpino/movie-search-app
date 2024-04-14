@@ -1,21 +1,17 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { LoadingContext } from '../contexts/LoadingContext';
 import SearchComponent from '../components/SearchComponent';
-import CountryFilter from '../components/CountryFilter';
 import MovieCard from '../components/MovieCard';
-import CountryStreamingCard from '../components/CountryStreamingCard';
 import {
-  getCountryStreamingFiltered,
   getCountryListSelected,
+  getCountryStreamingFiltered,
   getCountryStreamingFormatted,
 } from '../utils';
 import Menu from '../components/Menu';
@@ -24,15 +20,16 @@ import { ColorScheme } from '../shapes/MemberShape';
 import { UserContext } from '../contexts/UserContext';
 import { API_URL } from '../../app.properties';
 import { saveWatchlist } from '../api/movieApi';
+import MovieStreamingDetails from '../components/MovieStreamingDetails';
 
-const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) => {
+const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorScheme, getById }) => {
   const { user, setUser } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
   const { menu, setMenu } = useContext(MenuContext);
   const [selectAll, setSelectAll] = useState(true);
   const [countryListSelected, setCountryListSelected] = useState([]);
   const [name, setName] = useState('');
-  const [selectedMovieName, setSelectedMovieName] = useState('');
+  const [selectedMovie, setSelectedMovie] = useState({});
   const [queryResult, setQueryResult] = useState([]);
   const [streaming, setStreaming] = useState([]);
   const [countryStreaming, setCountryStreaming] = useState([]);
@@ -43,6 +40,59 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
+
+  useEffect(() => {
+    const locationPathArr = location.pathname.split('/');
+
+    if (location.search && location.search.includes('token=')) {
+      const token = location.search.split('token=')[1];
+      localStorage.setItem('token', token);
+      window.location.href = '/movies';
+      navigate('/movies');
+      return;
+    }
+
+    loadSelectedMovie();
+
+    if (
+      locationPathArr.length > 1 &&
+      (locationPathArr[1] === 'tv-shows' || locationPathArr[1] === 'movies')
+    ) {
+      setMenu(locationPathArr[1]);
+    } else {
+      setMenu('movies');
+    }
+
+    if (location && location.search) {
+      const locationSearchArr = location.search.split('?name=');
+      if (locationSearchArr.length > 1) {
+        const nameDecoded = decodeURIComponent(locationSearchArr[1]);
+        setName(nameDecoded);
+        search(nameDecoded);
+      }
+    }
+    const reg = new RegExp('^[0-9]+$');
+    if (reg.test(id)) {
+      searchStreaming(id);
+    }
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [id, location.search, user]);
+
+  const loadSelectedMovie = () => {
+    console.log(id, selectedMovie.id);
+    if (id && !selectedMovie.id) {
+      setLoading(true);
+      getById(id)
+        .then((res) => {
+          setSelectedMovie(res.data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setShowError(true);
+          setLoading(false);
+        });
+    }
+  };
 
   const search = (name) => {
     setShowError(false);
@@ -69,7 +119,6 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
   };
 
   const applyWatchlistMovies = (data) => {
-    console.log(data);
     const noUserWatchlist =
       !user ||
       !user.watchlist ||
@@ -101,7 +150,7 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
   const searchStreaming = (id) => {
     setShowError(false);
     setLoading(true);
-    getById(id)
+    getProvidersById(id)
       .then((response) => {
         setStreaming(response.data);
         const countriesStreaming = getCountryStreamingFormatted(response.data);
@@ -139,41 +188,6 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
     });
     setCountryStreamingFiltered(newFilteredArray);
   };
-
-  useEffect(() => {
-    const locationPathArr = location.pathname.split('/');
-
-    if (location.search && location.search.includes('token=')) {
-      const token = location.search.split('token=')[1];
-      localStorage.setItem('token', token);
-      window.location.href = '/movies';
-      navigate('/movies');
-      return;
-    }
-
-    if (
-      locationPathArr.length > 1 &&
-      (locationPathArr[1] === 'tv-shows' || locationPathArr[1] === 'movies')
-    ) {
-      setMenu(locationPathArr[1]);
-    } else {
-      setMenu('movies');
-    }
-
-    if (location && location.search) {
-      const locationSearchArr = location.search.split('?name=');
-      if (locationSearchArr.length > 1) {
-        const nameDecoded = decodeURIComponent(locationSearchArr[1]);
-        setName(nameDecoded);
-        search(nameDecoded);
-      }
-    }
-    const reg = new RegExp('^[0-9]+$');
-    if (reg.test(id)) {
-      searchStreaming(id);
-    }
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [id, location.search, user]);
 
   const onChangeCountry = (country) => {
     countryListSelected[country] = !countryListSelected[country];
@@ -221,6 +235,44 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
       });
   };
 
+  const onSelectWatchlistOnMovieStreamingDetails = () => {
+    const updatedSelectedMovie = { ...selectedMovie };
+    updatedSelectedMovie.watchlist = !selectedMovie.watchlist;
+    setSelectedMovie(updatedSelectedMovie);
+
+    if (user && user.watchlist && user.watchlist.movies) {
+      const updatedUserMovies = [...user.watchlist.movies];
+      updatedUserMovies.forEach((movie, i) => {
+        if (Number(movie.id) === Number(updatedSelectedMovie.id)) {
+          updatedUserMovies[i].watchlist = updatedSelectedMovie.watchlist;
+        }
+      });
+      const updatedUser = { ...user };
+      updatedUser.watchlist.movies = updatedUserMovies;
+      saveWatchlist(updatedSelectedMovie)
+        .then(() => {
+          setUser(updatedUser);
+        })
+        .catch((err) => {
+          // TODO: Add Error message
+          console.error(err);
+          setShowError(true);
+        });
+    }
+  };
+
+  const getWatchlistMovie = () => {
+    if (user.watchlist && user.watchlist.movies && id) {
+      console.log(user.watchlist.movies);
+      const movie = user.watchlist.movies.filter((movie) => movie.id === Number(id));
+
+      if (movie && movie[0].watchlist) {
+        return movie[0];
+      }
+    }
+    return {};
+  };
+
   return (
     <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
       <Menu
@@ -259,10 +311,10 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
                 <MovieCard
                   movieResult={result}
                   onClickMovieTitle={(id, name) => {
-                    setSelectedMovieName(name);
+                    setSelectedMovie(result);
                     navigate(`/${menu}/${id}`);
                   }}
-                  onSelectWatchlist={() => onSelectWatchlist(index, result.watchlist)}
+                  onSelectWatchlist={() => onSelectWatchlist(index)}
                   showWatchlistIcon={!!user && !!user.email}
                 />
               </Grid>
@@ -276,63 +328,22 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
       )}
 
       {streaming && countryStreamingFiltered.length > 0 && (
-        <Box>
-          <Button
-            size='small'
-            variant='outlined'
-            onClick={() => setShowFilters(!showFilters)}
-            color={colorScheme.muiColor}
-            sx={{ mb: 1 }}
-          >
-            {showFilters ? 'Hide filters' : 'Show filters'}
-          </Button>
-          {showFilters && (
-            <CountryFilter
-              defaultSelectAll
-              selectAllValue={selectAll}
-              onChangeSelectAll={() => onChangeSelectAllCountries()}
-              countryList={countryStreaming}
-              countryListSelected={countryListSelected}
-              onChangeCountry={(country) => onChangeCountry(country)}
-              onClickApplyCountryFilter={() => applyCountryFilter()}
-              colorScheme={colorScheme}
-            />
-          )}
-          <br />
-          <Box sx={{ pb: 2, pt: 3, textAlign: 'center' }}>
-            <Link
-              href={streaming.link}
-              variant='h4'
-              target='_blank'
-              rel='noreferrer'
-              color={colorScheme.active}
-              sx={{
-                textDecoration: 'underline',
-                textDecorationThickness: 'from-font',
-              }}
-            >
-              {selectedMovieName}
-            </Link>
-          </Box>
-          <Grid container spacing={3} columns={{ xs: 1, sm: 8, md: 12 }}>
-            {countryStreamingFiltered.map((countryFlatrate) => (
-              <>
-                <Grid
-                  item
-                  xs={1}
-                  sm={3}
-                  md={3}
-                  key={`${countryFlatrate.country} ${countryFlatrate.streaming}`}
-                >
-                  <CountryStreamingCard
-                    countryFlatrate={countryFlatrate}
-                    colorScheme={colorScheme}
-                  />
-                </Grid>
-              </>
-            ))}
-          </Grid>
-        </Box>
+        <MovieStreamingDetails
+          onClickShowFilters={() => setShowFilters(!showFilters)}
+          showFilters={showFilters}
+          selectAll={selectAll}
+          onChangeSelectAllCountries={() => onChangeSelectAllCountries()}
+          countryStreaming={countryStreaming}
+          countryListSelected={countryListSelected}
+          onClickChangeCountry={(country) => onChangeCountry(country)}
+          onClickApplyCountryFilter={() => applyCountryFilter()}
+          streaming={streaming}
+          countryStreamingFiltered={countryStreamingFiltered}
+          colorScheme={colorScheme}
+          showWatchlistIcon={!!user && !!user.email}
+          movieResult={selectedMovie}
+          onSelectWatchlist={() => onSelectWatchlistOnMovieStreamingDetails()}
+        />
       )}
     </Box>
   );
@@ -340,7 +351,7 @@ const MainContainer = ({ getByName, getById, searchInputLabel, colorScheme }) =>
 
 MainContainer.propTypes = {
   getByName: PropTypes.func.isRequired,
-  getById: PropTypes.func.isRequired,
+  getProvidersById: PropTypes.func.isRequired,
   searchInputLabel: PropTypes.string.isRequired,
   colorScheme: PropTypes.shape(ColorScheme).isRequired,
 };

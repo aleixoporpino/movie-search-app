@@ -1,7 +1,12 @@
 import { api } from './api';
 import API_URL from './API_URL';
 
-export const getTvShowById = (tvShowId, name) => {
+export const getProvidersById = (tvShowId) => {
+  const url = `${API_URL.TV_SHOWS.PROVIDERS_BY_ID.replace('{tvShowId}', tvShowId)}`;
+  return api.get(url);
+};
+
+export const getTvShowById = (tvShowId) => {
   const url = `${API_URL.TV_SHOWS.DEFAULT}${tvShowId}`;
   return api.get(url);
 };

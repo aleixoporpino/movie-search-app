@@ -37,7 +37,7 @@ const MovieCard = ({ movieResult, onClickMovieTitle, onSelectWatchlist, showWatc
               color='error'
               onChange={onSelectWatchlist}
               checked={movieResult.watchlist}
-              sx={{ '& .MuiSvgIcon-root': { fontSize: 35 }, zIndex: 30000 }}
+              sx={{ '& .MuiSvgIcon-root': { fontSize: 35 } }}
             />
           </Tooltip>
         </Box>

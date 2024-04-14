@@ -7,11 +7,13 @@ export default {
   MOVIES: {
     DEFAULT: movies,
     BY_NAME: `${movies}name/`,
+    PROVIDERS_BY_ID: `${movies}{movieId}/providers`,
     WATCHLIST: `${movies}watchlist`,
   },
   TV_SHOWS: {
     DEFAULT: tvShows,
     BY_NAME: `${tvShows}name/`,
+    PROVIDERS_BY_ID: `${movies}{tvShowId}/providers`,
   },
   QUOTES: {
     RANDOM: `${quotes}random`,

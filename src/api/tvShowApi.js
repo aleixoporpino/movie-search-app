@@ -15,3 +15,8 @@ export const getTvShowsByName = (name) => {
   const url = `${API_URL.TV_SHOWS.BY_NAME}${name}`;
   return api.get(url);
 };
+
+export const saveTvShowWatchlist = (movieResult) => {
+  const url = `${API_URL.TV_SHOWS.WATCHLIST}`;
+  return api.post(url, movieResult);
+};

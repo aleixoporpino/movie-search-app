@@ -9,8 +9,8 @@ import MenuItem from '@mui/material/MenuItem';
 import PropTypes from 'prop-types';
 import { UserShape } from '../shapes/UserShape';
 
-const UserCard = ({ user, handleProfile, handleWatchlist, handleLogout }) => {
-  const settings = ['Profile', 'Watchlist', 'Logout'];
+const UserCard = ({ user, handleHome, handleProfile, handleWatchlist, handleLogout }) => {
+  const settings = ['Home', 'Profile', 'Watchlist', 'Logout'];
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -20,6 +20,9 @@ const UserCard = ({ user, handleProfile, handleWatchlist, handleLogout }) => {
   const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);
     switch (setting) {
+      case 'Home':
+        handleHome();
+        break;
       case 'Profile':
         handleProfile();
         break;
@@ -69,6 +72,7 @@ const UserCard = ({ user, handleProfile, handleWatchlist, handleLogout }) => {
 
 UserCard.propTypes = {
   user: PropTypes.shape(UserShape).isRequired,
+  handleHome: PropTypes.func.isRequired,
   handleProfile: PropTypes.func.isRequired,
   handleLogout: PropTypes.func.isRequired,
   handleWatchlist: PropTypes.func.isRequired,

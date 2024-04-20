@@ -13,7 +13,8 @@ export default {
   TV_SHOWS: {
     DEFAULT: tvShows,
     BY_NAME: `${tvShows}name/`,
-    PROVIDERS_BY_ID: `${movies}{tvShowId}/providers`,
+    PROVIDERS_BY_ID: `${tvShows}{tvShowId}/providers`,
+    WATCHLIST: `${tvShows}watchlist`,
   },
   QUOTES: {
     RANDOM: `${quotes}random`,

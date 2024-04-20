@@ -16,7 +16,7 @@ export const getMoviesByName = (name) => {
   return api.get(url);
 };
 
-export const saveWatchlist = (movieResult) => {
+export const saveMovieWatchlist = (movieResult) => {
   const url = `${API_URL.MOVIES.WATCHLIST}`;
   return api.post(url, movieResult);
 };

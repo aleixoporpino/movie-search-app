@@ -10,10 +10,11 @@ import { MenuContext } from './contexts/MenuContext';
 import TVShowsPage from './containers/TVShowsPage';
 import NotFound from './NotFound';
 import Footer from './components/Footer';
-import { tvShowsColors } from './utils/colorScheme';
+import { movieColors, tvShowsColors } from './utils/colorScheme';
 import { UserContext } from './contexts/UserContext';
 import { getUser } from './api/userApi';
 import UserProfilePage from './containers/UserProfilePage';
+import WatchlistPage from './containers/WatchlistPage';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -57,11 +58,26 @@ function App() {
               <Router>
                 <Routes>
                   <Route exact path='/' element={<MoviesPage />} />
-                  <Route exact path='/movies' element={<MoviesPage />} />
-                  <Route exact path='/movies/:id' element={<MoviesPage />} />
-                  <Route exact path='/tv-shows' element={<TVShowsPage />} />
-                  <Route exact path='/tv-shows/:id' element={<TVShowsPage />} />
+                  <Route exact path='/movies' element={<MoviesPage user={user} />} />
+                  <Route exact path='/movies/:id' element={<MoviesPage user={user} />} />
+                  <Route exact path='/tv-shows' element={<TVShowsPage user={user} />} />
+                  <Route exact path='/tv-shows/:id' element={<TVShowsPage user={user} />} />
                   <Route exact path='/profile' element={<UserProfilePage user={user} />} />
+                  <Route
+                    exact
+                    path='/watchlist'
+                    element={<WatchlistPage page='movies' colorScheme={movieColors} />}
+                  />
+                  <Route
+                    exact
+                    path='/watchlist/movies'
+                    element={<WatchlistPage page='movies' colorScheme={movieColors} />}
+                  />
+                  <Route
+                    exact
+                    path='/watchlist/tv-shows'
+                    element={<WatchlistPage page='tv-shows' colorScheme={tvShowsColors} />}
+                  />
                   <Route path='*' element={<NotFound />} />
                 </Routes>
               </Router>

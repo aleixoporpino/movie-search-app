@@ -10,7 +10,17 @@ import { ColorScheme } from '../shapes/MemberShape';
 import UserCard from './UserCard';
 import { UserShape } from '../shapes/UserShape';
 
-const Menu = ({ colorScheme, user, handleLogin, handleProfile, handleWatchlist, handleLogout }) => {
+const Menu = ({
+  colorScheme,
+  user,
+  linkMovies,
+  linkTvShows,
+  handleHome,
+  handleLogin,
+  handleProfile,
+  handleWatchlist,
+  handleLogout,
+}) => {
   const { menu, setMenu } = useContext(MenuContext);
 
   const activeMenu = {
@@ -36,7 +46,7 @@ const Menu = ({ colorScheme, user, handleLogin, handleProfile, handleWatchlist, 
       <div />
       <Box sx={{ textAlign: 'center', pb: 3, pt: 3 }}>
         <Link
-          to='/movies'
+          to={linkMovies}
           style={menu === 'movies' ? { ...activeMenu } : { ...inactiveMenu }}
           onClick={() => setMenu('movies')}
         >
@@ -44,7 +54,7 @@ const Menu = ({ colorScheme, user, handleLogin, handleProfile, handleWatchlist, 
         </Link>{' '}
         <span style={{ fontSize: '1.5rem' }}>{' | '}</span>
         <Link
-          to='/tv-shows'
+          to={linkTvShows}
           style={menu === 'tv-shows' ? { ...activeMenu } : { ...inactiveMenu }}
           onClick={() => setMenu('tv-shows')}
         >
@@ -54,6 +64,7 @@ const Menu = ({ colorScheme, user, handleLogin, handleProfile, handleWatchlist, 
       {user && user.email ? (
         <UserCard
           user={user}
+          handleHome={handleHome}
           handleProfile={handleProfile}
           handleLogout={handleLogout}
           handleWatchlist={handleWatchlist}
@@ -97,6 +108,9 @@ const Menu = ({ colorScheme, user, handleLogin, handleProfile, handleWatchlist, 
 
 Menu.propTypes = {
   colorScheme: PropTypes.shape(ColorScheme).isRequired,
+  linkMovies: PropTypes.string,
+  linkTvShows: PropTypes.string,
+  handleHome: PropTypes.func.isRequired,
   handleLogin: PropTypes.func.isRequired,
   handleProfile: PropTypes.func.isRequired,
   handleWatchlist: PropTypes.func.isRequired,
@@ -106,6 +120,8 @@ Menu.propTypes = {
 
 Menu.defaultProps = {
   user: {},
+  linkMovies: '/movies',
+  linkTvShows: '/tv-shows',
 };
 
 export default Menu;

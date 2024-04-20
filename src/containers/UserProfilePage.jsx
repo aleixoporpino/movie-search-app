@@ -99,20 +99,17 @@ const UserProfilePage = () => {
 
     const updatedUserForm = { ...userForm };
     updatedUserForm.countries = selectedCountries;
-    console.log(updatedUserForm.countries);
     setUserForm(updatedUserForm);
   };
 
   const onClickSave = () => {
-    console.log(userForm);
     saveUser(userForm)
       .then((r) => {
         // TODO: Fix page refreshing
         setUser(r);
       })
-      .catch((e) => {
+      .catch(() => {
         // TODO: show error message
-        console.error(e);
       });
   };
 

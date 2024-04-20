@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { LoadingContext } from '../contexts/LoadingContext';
 import SearchComponent from '../components/SearchComponent';
@@ -19,10 +17,18 @@ import { MenuContext } from '../contexts/MenuContext';
 import { ColorScheme } from '../shapes/MemberShape';
 import { UserContext } from '../contexts/UserContext';
 import { API_URL } from '../../app.properties';
-import { saveWatchlist } from '../api/movieApi';
 import MovieStreamingDetails from '../components/MovieStreamingDetails';
+import ErrorAlert from '../components/ErrorAlert';
 
-const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorScheme, getById }) => {
+const MainContainer = ({
+  getByName,
+  getProvidersById,
+  searchInputLabel,
+  colorScheme,
+  getById,
+  saveWatchlist,
+  applyWatchlist,
+}) => {
   const { user, setUser } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
   const { menu, setMenu } = useContext(MenuContext);
@@ -79,7 +85,6 @@ const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorSch
   }, [id, location.search, user]);
 
   const loadSelectedMovie = () => {
-    console.log(id, selectedMovie.id);
     if (id && !selectedMovie.id) {
       setLoading(true);
       getById(id)
@@ -102,13 +107,12 @@ const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorSch
       getByName(name)
         .then((response) => {
           setLoading(false);
-          setQueryResult(applyWatchlistMovies(response.data));
+          setQueryResult(applyWatchlist(response.data));
           if (!response.data || !response.data.results || response.data.results.length === 0) {
             setShowEmptyMessage(true);
           }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           setShowError(true);
           setLoading(false);
         });
@@ -116,35 +120,6 @@ const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorSch
       setCountryStreaming([]);
       setCountryStreamingFiltered([]);
     }
-  };
-
-  const applyWatchlistMovies = (data) => {
-    const noUserWatchlist =
-      !user ||
-      !user.watchlist ||
-      !user.watchlist.movies ||
-      !user.watchlist.movies.length > 0 ||
-      !data ||
-      !data.results ||
-      !data.results.length > 0;
-    if (noUserWatchlist) {
-      return data;
-    }
-
-    const movieIdMap = {};
-    user.watchlist.movies.forEach((movie) => {
-      movieIdMap[movie.id] = movie.watchlist;
-    });
-
-    const updatedData = { ...data };
-    updatedData.results = [];
-    data.results.forEach((movie) => {
-      const updatedMovie = { ...movie };
-      updatedMovie.watchlist = !!movieIdMap[movie.id];
-      updatedData.results.push(updatedMovie);
-    });
-
-    return updatedData;
   };
 
   const searchStreaming = (id) => {
@@ -253,24 +228,11 @@ const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorSch
         .then(() => {
           setUser(updatedUser);
         })
-        .catch((err) => {
+        .catch(() => {
           // TODO: Add Error message
-          console.error(err);
           setShowError(true);
         });
     }
-  };
-
-  const getWatchlistMovie = () => {
-    if (user.watchlist && user.watchlist.movies && id) {
-      console.log(user.watchlist.movies);
-      const movie = user.watchlist.movies.filter((movie) => movie.id === Number(id));
-
-      if (movie && movie[0].watchlist) {
-        return movie[0];
-      }
-    }
-    return {};
   };
 
   return (
@@ -278,21 +240,13 @@ const MainContainer = ({ getByName, getProvidersById, searchInputLabel, colorSch
       <Menu
         colorScheme={colorScheme}
         user={user}
+        handleHome={() => navigate('/')}
         handleLogin={handleLogin}
         handleProfile={() => navigate('/profile')}
         handleWatchlist={() => navigate('/watchlist')}
         handleLogout={handleLogout}
       />
-      <Collapse in={showError}>
-        <Alert
-          severity='error'
-          sx={{ mb: 3 }}
-          variant='outlined'
-          onClose={() => setShowError(false)}
-        >
-          Oops! An expected error happened, try again later.
-        </Alert>
-      </Collapse>
+      <ErrorAlert showError={showError} onClose={() => setShowError(false)} />
       <SearchComponent
         onSearch={() => navigate(`/${menu}?name=${name}`)}
         setValue={(value) => setName(value)}
@@ -354,6 +308,9 @@ MainContainer.propTypes = {
   getProvidersById: PropTypes.func.isRequired,
   searchInputLabel: PropTypes.string.isRequired,
   colorScheme: PropTypes.shape(ColorScheme).isRequired,
+  getById: PropTypes.func.isRequired,
+  saveWatchlist: PropTypes.func.isRequired,
+  applyWatchlist: PropTypes.func.isRequired,
 };
 
 export default MainContainer;

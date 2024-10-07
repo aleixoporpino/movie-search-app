@@ -21,6 +21,7 @@ import MovieStreamingDetails from '../components/MovieStreamingDetails';
 import ErrorAlert from '../components/ErrorAlert';
 
 const MainContainer = ({
+  page,
   getByName,
   getProvidersById,
   searchInputLabel,
@@ -199,9 +200,30 @@ const MainContainer = ({
       ...updatedResults[index],
       watchlist: !updatedResults[index].watchlist,
     };
+
+    const updatedUser = { ...user };
+
     setQueryResult({ ...queryResult, results: updatedResults });
     saveWatchlist(updatedResults[index])
       .then(() => {
+        const media = updatedResults[index];
+        if (media.watchlist) {
+          if (page === 'Movies') {
+            updatedUser.watchlist.movies.push(media);
+          } else if (page === 'TV Shows') {
+            updatedUser.watchlist.tvShows.push(media);
+          }
+        } else if (page === 'Movies') {
+          updatedUser.watchlist.movies = updatedUser.watchlist.movies.filter(
+            (it) => it.id !== media.id,
+          );
+        } else if (page === 'TV Shows') {
+          updatedUser.watchlist.tvShows = updatedUser.watchlist.tvShows.filter(
+            (it) => it.id !== media.id,
+          );
+        }
+
+        setUser(updatedUser);
         // TODO: Add Success message
       })
       .catch(() => {
@@ -264,7 +286,7 @@ const MainContainer = ({
               <Grid item xs={1} sm={3} md={3} key={result.id}>
                 <MovieCard
                   movieResult={result}
-                  onClickMovieTitle={(id, name) => {
+                  onClickMovieTitle={(id) => {
                     setSelectedMovie(result);
                     navigate(`/${menu}/${id}`);
                   }}
@@ -304,6 +326,7 @@ const MainContainer = ({
 };
 
 MainContainer.propTypes = {
+  page: PropTypes.string.isRequired,
   getByName: PropTypes.func.isRequired,
   getProvidersById: PropTypes.func.isRequired,
   searchInputLabel: PropTypes.string.isRequired,

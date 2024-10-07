@@ -42,6 +42,7 @@ const TVShowsPage = ({ user }) => {
   };
   return (
     <MainContainer
+      page='TV Shows'
       getByName={getTvShowsByName}
       getProvidersById={getProvidersById}
       getById={getTvShowById}

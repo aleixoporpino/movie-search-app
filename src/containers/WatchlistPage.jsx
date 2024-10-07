@@ -21,14 +21,15 @@ const WatchlistPage = ({ colorScheme, page }) => {
 
   useEffect(() => {
     if (page === 'movies') {
-      if (user && user.watchlist && user.watchlist.movies && user.watchlist.movies.length > 0) {
+      if (user && user.watchlist && user.watchlist.movies) {
         setMedia(user.watchlist.movies);
       }
     } else if (page === 'tv-shows') {
-      if (user && user.watchlist && user.watchlist.tvShows && user.watchlist.tvShows.length > 0) {
+      if (user && user.watchlist && user.watchlist.tvShows) {
         setMedia(user.watchlist.tvShows);
       }
     }
+
     if (page) {
       setMenu(page);
     }

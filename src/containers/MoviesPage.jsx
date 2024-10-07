@@ -43,6 +43,7 @@ const MoviesPage = ({ user }) => {
 
   return (
     <MainContainer
+      page='Movies'
       getByName={getMoviesByName}
       getProvidersById={getProvidersById}
       getById={getMovieById}

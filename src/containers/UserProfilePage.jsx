@@ -187,7 +187,7 @@ const UserProfilePage = () => {
                 label='Notify for Streaming'
               />
             </FormGroup>
-            {Object.keys(countryListSelected).length > 0 ? (
+            {countries.length > 0 ? (
               <>
                 <Typography>Preferred Countries:</Typography>
                 <CountryFilter

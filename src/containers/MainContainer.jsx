@@ -19,6 +19,7 @@ import { UserContext } from '../contexts/UserContext';
 import { API_URL } from '../../app.properties';
 import MovieStreamingDetails from '../components/MovieStreamingDetails';
 import ErrorAlert from '../components/ErrorAlert';
+import WebSocketComponent from '../components/WebSocketComponent';
 
 const MainContainer = ({
   page,
@@ -321,6 +322,7 @@ const MainContainer = ({
           onSelectWatchlist={() => onSelectWatchlistOnMovieStreamingDetails()}
         />
       )}
+      <WebSocketComponent page={location.pathname} />
     </Box>
   );
 };

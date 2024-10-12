@@ -11,7 +11,7 @@ const WebSocketComponent = ({ page }) => {
   const [clientCount, setClientCount] = useState(0);
 
   useEffect(() => {
-    const wsURL = `ws:${properties.API_URL.split(':')[1].split('api/v1/')[0]}ws`;
+    const wsURL = `wss:${properties.API_URL.split(':')[1].split('api/v1/')[0]}ws`;
     const ws = new WebSocket(wsURL);
     setSocket(ws);
 

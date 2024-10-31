@@ -10,9 +10,17 @@ const WebSocketComponent = ({ page }) => {
   const [, setSocket] = useState(null);
   const [clientCount, setClientCount] = useState(0);
 
+  const getWsURL = () => {
+    const commaSplit = properties.API_URL.split(':');
+    if (commaSplit[0] === 'https') {
+      return `wss:${properties.API_URL.split(':')[1].split('api/v1/')[0]}ws`;
+    }
+
+    return `ws:${commaSplit[1]}:${commaSplit[2].split('api/v1/')[0]}ws`;
+  };
+
   useEffect(() => {
-    const wsURL = `wss:${properties.API_URL.split(':')[1].split('api/v1/')[0]}ws`;
-    const ws = new WebSocket(wsURL);
+    const ws = new WebSocket(getWsURL());
     setSocket(ws);
 
     ws.onopen = () => {

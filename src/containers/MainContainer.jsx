@@ -30,6 +30,7 @@ const MainContainer = ({
   getById,
   saveWatchlist,
   applyWatchlist,
+  searchValue,
 }) => {
   const { user, setUser } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
@@ -151,7 +152,6 @@ const MainContainer = ({
         setShowError(true);
         setLoading(false);
       });
-    setName('');
     setQueryResult([]);
   };
 

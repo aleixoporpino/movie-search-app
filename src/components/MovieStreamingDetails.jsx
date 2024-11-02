@@ -102,16 +102,11 @@ const MovieStreamingDetails = ({
           color={colorScheme.active}
         />
       </Box>
-      <Grid container spacing={3} columns={{ xs: 1, sm: 8, md: 12 }}>
+
+      <Grid container spacing={3} columns={{ xs: 1, sm: 8, md: 12 }} key='streamingGrid'>
         {countryStreamingFiltered.map((countryFlatrate) => (
           <>
-            <Grid
-              item
-              xs={1}
-              sm={3}
-              md={3}
-              key={`${countryFlatrate.country} ${countryFlatrate.streaming}`}
-            >
+            <Grid item xs={1} sm={3} md={3} key={`flatrate-${countryFlatrate.country}`}>
               <CountryStreamingCard countryFlatrate={countryFlatrate} colorScheme={colorScheme} />
             </Grid>
           </>

@@ -8,14 +8,20 @@ const RandomQuote = () => {
   const [quote, setQuote] = useState({});
   const [loadingQuote, setLoadingQuote] = useState(false);
   useEffect(() => {
-    setLoadingQuote(true);
+    const loadingTimer = setTimeout(() => {
+      setLoadingQuote(true);
+    }, 300);
+
     getRandomQuote()
       .then((response) => {
         setQuote(response.data);
       })
       .finally(() => {
         setLoadingQuote(false);
+        clearTimeout(loadingTimer);
       });
+
+    return () => clearTimeout(loadingTimer);
   }, []);
   return (
     <Box sx={{ textAlign: 'center', pt: 1, pb: 1, fontSize: '14px' }}>

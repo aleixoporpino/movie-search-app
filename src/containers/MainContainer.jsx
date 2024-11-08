@@ -20,6 +20,7 @@ import { API_URL } from '../../app.properties';
 import MovieStreamingDetails from '../components/MovieStreamingDetails';
 import ErrorAlert from '../components/ErrorAlert';
 import WebSocketComponent from '../components/WebSocketComponent';
+import RandomQuote from '../components/RandomQuote';
 
 const MainContainer = ({
   page,
@@ -259,71 +260,74 @@ const MainContainer = ({
   };
 
   return (
-    <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
-      <Menu
-        colorScheme={colorScheme}
-        user={user}
-        handleHome={() => navigate('/')}
-        handleLogin={handleLogin}
-        handleProfile={() => navigate('/profile')}
-        handleWatchlist={() => navigate('/watchlist')}
-        handleLogout={handleLogout}
-      />
-      <ErrorAlert showError={showError} onClose={() => setShowError(false)} />
-      <SearchComponent
-        onSearch={() => navigate(`/${menu}?name=${name}`)}
-        setValue={(value) => setName(value)}
-        value={name}
-        loading={loading}
-        label={searchInputLabel}
-        colorScheme={colorScheme}
-      />
-
-      <Box sx={{ pt: 3 }} display='flex' justifyContent='center'>
-        <Grid container spacing={{ xs: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
-          {queryResult &&
-            queryResult.results &&
-            queryResult.results.map((result, index) => (
-              <Grid item xs={1} sm={3} md={3} key={result.id}>
-                <MovieCard
-                  movieResult={result}
-                  onClickMovieTitle={(id) => {
-                    setSelectedMovie(result);
-                    navigate(`/${menu}/${id}`);
-                  }}
-                  onSelectWatchlist={() => onSelectWatchlist(index)}
-                  showWatchlistIcon={!!user && !!user.email}
-                />
-              </Grid>
-            ))}
-        </Grid>
-      </Box>
-      {showEmptyMessage && (
-        <Typography variant='h6' color={colorScheme.muiColor}>
-          Nothing was found 😞.
-        </Typography>
-      )}
-
-      {streaming && countryStreamingFiltered.length > 0 && (
-        <MovieStreamingDetails
-          onClickShowFilters={() => setShowFilters(!showFilters)}
-          showFilters={showFilters}
-          selectAll={selectAll}
-          onChangeSelectAllCountries={() => onChangeSelectAllCountries()}
-          countryStreaming={countryStreaming}
-          countryListSelected={countryListSelected}
-          onClickChangeCountry={(country) => onChangeCountry(country)}
-          onClickApplyCountryFilter={() => applyCountryFilter()}
-          streaming={streaming}
-          countryStreamingFiltered={countryStreamingFiltered}
+    <>
+      <RandomQuote />
+      <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
+        <Menu
           colorScheme={colorScheme}
-          showWatchlistIcon={!!user && !!user.email}
-          movieResult={selectedMovie}
-          onSelectWatchlist={() => onSelectWatchlistOnMovieStreamingDetails()}
+          user={user}
+          handleHome={() => navigate('/')}
+          handleLogin={handleLogin}
+          handleProfile={() => navigate('/profile')}
+          handleWatchlist={() => navigate('/watchlist')}
+          handleLogout={handleLogout}
         />
-      )}
-      <WebSocketComponent page={location.pathname} />
-    </Box>
+        <ErrorAlert showError={showError} onClose={() => setShowError(false)} />
+        <SearchComponent
+          onSearch={() => navigate(`/${menu}?name=${name}`)}
+          setValue={(value) => setName(value)}
+          value={name}
+          loading={loading}
+          label={searchInputLabel}
+          colorScheme={colorScheme}
+        />
+
+        <Box sx={{ pt: 3 }} display='flex' justifyContent='center'>
+          <Grid container spacing={{ xs: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
+            {queryResult &&
+              queryResult.results &&
+              queryResult.results.map((result, index) => (
+                <Grid item xs={1} sm={3} md={3} key={result.id}>
+                  <MovieCard
+                    movieResult={result}
+                    onClickMovieTitle={(id) => {
+                      setSelectedMovie(result);
+                      navigate(`/${menu}/${id}`);
+                    }}
+                    onSelectWatchlist={() => onSelectWatchlist(index)}
+                    showWatchlistIcon={!!user && !!user.email}
+                  />
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
+        {showEmptyMessage && (
+          <Typography variant='h6' color={colorScheme.muiColor}>
+            Nothing was found 😞.
+          </Typography>
+        )}
+
+        {streaming && countryStreamingFiltered.length > 0 && (
+          <MovieStreamingDetails
+            onClickShowFilters={() => setShowFilters(!showFilters)}
+            showFilters={showFilters}
+            selectAll={selectAll}
+            onChangeSelectAllCountries={() => onChangeSelectAllCountries()}
+            countryStreaming={countryStreaming}
+            countryListSelected={countryListSelected}
+            onClickChangeCountry={(country) => onChangeCountry(country)}
+            onClickApplyCountryFilter={() => applyCountryFilter()}
+            streaming={streaming}
+            countryStreamingFiltered={countryStreamingFiltered}
+            colorScheme={colorScheme}
+            showWatchlistIcon={!!user && !!user.email}
+            movieResult={selectedMovie}
+            onSelectWatchlist={() => onSelectWatchlistOnMovieStreamingDetails()}
+          />
+        )}
+        <WebSocketComponent page={location.pathname} />
+      </Box>
+    </>
   );
 };
 

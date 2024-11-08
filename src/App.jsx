@@ -54,7 +54,6 @@ function App() {
           <UserContext.Provider value={{ user, setUser }}>
             <CssBaseline />
             <Container sx={{ position: 'relative', minHeight: '100vh' }}>
-              <RandomQuote />
               <Router>
                 <Routes>
                   <Route exact path='/' element={<MoviesPage />} />

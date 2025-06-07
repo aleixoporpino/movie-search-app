@@ -2,6 +2,7 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
+import PropTypes from 'prop-types';
 
 const JustWatchWidget = ({ country }) => (
   <Box sx={{ pt: 1, textAlign: 'center' }}>
@@ -34,5 +35,13 @@ const JustWatchWidget = ({ country }) => (
     </Link>
   </Box>
 );
+
+JustWatchWidget.propTypes = {
+  country: PropTypes.string,
+};
+
+JustWatchWidget.defaultProps = {
+  country: '',
+};
 
 export default JustWatchWidget;

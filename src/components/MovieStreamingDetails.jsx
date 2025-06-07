@@ -11,6 +11,7 @@ import CountryStreamingCard from './CountryStreamingCard';
 import CountryFilter from './CountryFilter';
 import { ColorScheme } from '../shapes/MemberShape';
 import UserScore from './UserScore';
+import { MovieResultShape } from '../shapes/MovieResultShape';
 
 const MovieStreamingDetails = ({
   onClickShowFilters,
@@ -98,7 +99,7 @@ const MovieStreamingDetails = ({
         </Link>
         <UserScore
           score={movieResult.voteAverage}
-          userVotes={movieResult.voteCount}
+          voteCount={movieResult.voteCount}
           color={colorScheme.active}
         />
       </Box>
@@ -128,6 +129,9 @@ MovieStreamingDetails.propTypes = {
   streaming: PropTypes.object.isRequired,
   countryStreamingFiltered: PropTypes.arrayOf(PropTypes.object).isRequired,
   colorScheme: PropTypes.shape(ColorScheme).isRequired,
+  showWatchlistIcon: PropTypes.bool.isRequired,
+  onSelectWatchlist: PropTypes.func.isRequired,
+  movieResult: PropTypes.shape(MovieResultShape).isRequired,
 };
 
 export default MovieStreamingDetails;

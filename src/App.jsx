@@ -5,7 +5,6 @@ import Container from '@mui/material/Container';
 import axios from 'axios';
 import MoviesPage from './containers/MoviesPage';
 import { LoadingContext } from './contexts/LoadingContext';
-import RandomQuote from './components/RandomQuote';
 import { MenuContext } from './contexts/MenuContext';
 import TVShowsPage from './containers/TVShowsPage';
 import NotFound from './NotFound';

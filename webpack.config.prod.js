@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 const properties = require('./app.properties');
 
@@ -39,6 +40,15 @@ module.exports = {
         minifyCSS: true,
         minifyURLs: true,
       },
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'public',
+          to: '.',
+          globOptions: { ignore: ['**/index.html'] },
+        },
+      ],
     }),
   ],
   module: {

@@ -1,0 +1,13 @@
+# Search Movies and TV Shows
+
+> A web app to search for movies and TV shows and find out where to stream them.
+
+Search Movies and TV Shows lets visitors look up movies and TV shows and see which
+streaming services carry them, using data from [TMDB](https://www.themoviedb.org/)
+and [JustWatch](https://www.justwatch.com/).
+
+## Pages
+
+- [Home](https://movie-search-app.fly.dev/): Search movies and TV shows.
+- [Movies](https://movie-search-app.fly.dev/movies): Browse and search movies.
+- [TV Shows](https://movie-search-app.fly.dev/tv-shows): Browse and search TV shows.

@@ -2,6 +2,9 @@
   "name": "movie-search-app",
   "version": "1.0.0",
   "private": true,
+  "resolutions": {
+    "@popperjs/core": "^2.11.8"
+  },
   "dependencies": {
     "@date-io/date-fns": "^2.13.1",
     "@emotion/react": "^11.7.1",
@@ -38,6 +41,7 @@
     "postcss-loader": "^5.2.0",
     "mini-css-extract-plugin": "1.4.0",
     "file-loader": "^6.2.0",
+    "copy-webpack-plugin": "^9.1.0",
     "css-loader": "5.2.0",
     "cssnano": "4.1.10",
     "npm-run-all": "^4.1.5",

@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const properties = require('./app.properties');
 
 process.env.NODE_ENV = 'development';
@@ -25,6 +26,15 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'public/index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'public',
+          to: '.',
+          globOptions: { ignore: ['**/index.html'] },
+        },
+      ],
     }),
   ],
   module: {

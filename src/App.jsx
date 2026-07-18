@@ -14,6 +14,7 @@ import { UserContext } from './contexts/UserContext';
 import { getUser } from './api/userApi';
 import UserProfilePage from './containers/UserProfilePage';
 import WatchlistPage from './containers/WatchlistPage';
+import AddToHomeScreenTip from './components/AddToHomeScreenTip';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -52,6 +53,7 @@ function App() {
         <ThemeProvider theme={darkTheme}>
           <UserContext.Provider value={{ user, setUser }}>
             <CssBaseline />
+            <AddToHomeScreenTip />
             <Container sx={{ position: 'relative', minHeight: '100vh' }}>
               <Router>
                 <Routes>

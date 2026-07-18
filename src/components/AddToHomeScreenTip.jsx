@@ -7,11 +7,16 @@ const DISMISSED_KEY = 'addToHomeScreenTipDismissed';
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
+const isMobile = () =>
+  /Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent) ||
+  // iPadOS reports as a Mac but exposes touch points, unlike a real Mac
+  (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+
 const AddToHomeScreenTip = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!isStandalone() && !localStorage.getItem(DISMISSED_KEY)) {
+    if (isMobile() && !isStandalone() && !localStorage.getItem(DISMISSED_KEY)) {
       setOpen(true);
     }
   }, []);

@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet-async';
 import { UserContext } from '../contexts/UserContext';
 import MovieCard from '../components/MovieCard';
 import { saveMovieWatchlist } from '../api/movieApi';
@@ -54,6 +55,10 @@ const WatchlistPage = ({ colorScheme, page }) => {
 
   return (
     <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
+      <Helmet>
+        <title>Your Watchlist | Search Movies and TV Shows</title>
+        <meta name='robots' content='noindex' />
+      </Helmet>
       <Typography variant='h4' sx={{ pb: 2, pt: 6 }}>
         Your Watchlist
       </Typography>

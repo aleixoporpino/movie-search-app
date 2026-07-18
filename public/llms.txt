@@ -1,10 +1,11 @@
 # Search Movies and TV Shows
 
-> A web app to search for movies and TV shows and find out where to stream them.
+> A web app to search for movies and TV shows and find out which streaming service
+> has them (Netflix, Apple TV, Amazon Prime, and more) and in which countries.
 
 Search Movies and TV Shows lets visitors look up movies and TV shows and see which
-streaming services carry them, using data from [TMDB](https://www.themoviedb.org/)
-and [JustWatch](https://www.justwatch.com/).
+streaming services carry them and in which countries, using data from
+[TMDB](https://www.themoviedb.org/) and [JustWatch](https://www.justwatch.com/).
 
 ## Pages
 

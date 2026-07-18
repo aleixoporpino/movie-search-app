@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import { QuestionMark } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { UserContext } from '../contexts/UserContext';
 import CountryFilter from '../components/CountryFilter';
 import { tvShowsColors } from '../utils/colorScheme';
@@ -115,6 +116,10 @@ const UserProfilePage = () => {
 
   return (
     <Box>
+      <Helmet>
+        <title>User Profile | Search Movies and TV Shows</title>
+        <meta name='robots' content='noindex' />
+      </Helmet>
       {user && user.email ? (
         <FormControl>
           <Box>

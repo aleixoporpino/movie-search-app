@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { Helmet } from 'react-helmet-async';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { LoadingContext } from '../contexts/LoadingContext';
 import SearchComponent from '../components/SearchComponent';
@@ -258,8 +259,58 @@ const MainContainer = ({
     }
   };
 
+  const canonicalUrl = `${window.location.origin}${location.pathname}`;
+  const singular = page === 'Movies' ? 'movie' : 'TV show';
+  const pageTitle =
+    id && selectedMovie.id
+      ? `${selectedMovie.originalTitle} - Where to watch | Search Movies and TV Shows`
+      : `${page} - Search and find where to watch | Search Movies and TV Shows`;
+  const pageDescription =
+    id && selectedMovie.id
+      ? (selectedMovie.overview && selectedMovie.overview.slice(0, 160)) ||
+        `Find out where to stream ${selectedMovie.originalTitle}, including which countries it's available in.`
+      : `Search for ${singular}s and find out which streaming service has them, from Netflix to Apple TV to Amazon Prime, and which countries they're streaming in.`;
+  const posterUrl =
+    id && selectedMovie.id && selectedMovie.posterPath
+      ? `https://image.tmdb.org/t/p/w500/${selectedMovie.posterPath}`
+      : undefined;
+
   return (
     <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name='description' content={pageDescription} />
+        <link rel='canonical' href={canonicalUrl} />
+        <meta property='og:type' content={id && selectedMovie.id ? 'video.movie' : 'website'} />
+        <meta property='og:title' content={pageTitle} />
+        <meta property='og:description' content={pageDescription} />
+        <meta property='og:url' content={canonicalUrl} />
+        {posterUrl && <meta property='og:image' content={posterUrl} />}
+        <meta name='twitter:card' content={posterUrl ? 'summary_large_image' : 'summary'} />
+        <meta name='twitter:title' content={pageTitle} />
+        <meta name='twitter:description' content={pageDescription} />
+        {posterUrl && <meta name='twitter:image' content={posterUrl} />}
+        {id && selectedMovie.id && (
+          <script type='application/ld+json'>
+            {JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': page === 'Movies' ? 'Movie' : 'TVSeries',
+              name: selectedMovie.originalTitle,
+              description: selectedMovie.overview,
+              image: posterUrl,
+              aggregateRating: selectedMovie.voteAverage
+                ? {
+                    '@type': 'AggregateRating',
+                    ratingValue: selectedMovie.voteAverage,
+                    ratingCount: selectedMovie.voteCount || 1,
+                    bestRating: 10,
+                    worstRating: 0,
+                  }
+                : undefined,
+            })}
+          </script>
+        )}
+      </Helmet>
       <RandomQuote />
       <Box sx={{ pb: 2, paddingBottom: '2.5rem' }}>
         <Menu

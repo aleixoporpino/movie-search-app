@@ -2,12 +2,17 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 
 const NotFound = () => {
   const navigate = useNavigate();
   return (
     <Box sx={{ pt: 3 }}>
+      <Helmet>
+        <title>Page not found | Search Movies and TV Shows</title>
+        <meta name='robots' content='noindex' />
+      </Helmet>
       <Typography variant='h4' color='#ffa726' sx={{ pb: 1 }}>
         Page Not found
       </Typography>

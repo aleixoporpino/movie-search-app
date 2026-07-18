@@ -2,6 +2,7 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import JustWatchImg from '../../public/justwatch.svg';
 import TmdbImg from '../../public/tmdb.svg';
 
@@ -71,7 +72,33 @@ const Footer = () => (
       target='_blank'
       rel='noreferrer'
     >
-      José Aleixo Filho.
+      Aleixo Porpino Filho.
+    </Link>
+    <Typography
+      variant='h7'
+      sx={{ width: '100%', fontWeight: 'lighter', fontSize: '11px', fontStyle: 'italic' }}
+      style={{ marginLeft: '3px' }}
+    >
+      {' '}
+    </Typography>
+    <Link
+      variant='h7'
+      href='https://ko-fi.com/aleixoporpino'
+      target='_blank'
+      rel='noreferrer'
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        verticalAlign: 'middle',
+        gap: '2px',
+        fontWeight: 'lighter',
+        fontSize: '11px',
+        color: '#FFF',
+        textDecoration: 'underline',
+        textDecorationThickness: 'from-font',
+      }}
+    >
+      <LocalCafeIcon sx={{ fontSize: '13px' }} /> Buy me a coffee
     </Link>
   </Box>
 );

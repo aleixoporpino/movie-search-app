@@ -11,7 +11,7 @@ import MovieCard from '../components/MovieCard';
 import {
   getCountryListSelected,
   getCountryStreamingFiltered,
-  getCountryStreamingFormatted,
+  getCountryProvidersFormatted,
 } from '../utils';
 import Menu from '../components/Menu';
 import { MenuContext } from '../contexts/MenuContext';
@@ -42,8 +42,8 @@ const MainContainer = ({
   const [selectedMovie, setSelectedMovie] = useState({});
   const [queryResult, setQueryResult] = useState([]);
   const [streaming, setStreaming] = useState([]);
-  const [countryStreaming, setCountryStreaming] = useState([]);
-  const [countryStreamingFiltered, setCountryStreamingFiltered] = useState([]);
+  const [countryProviders, setCountryProviders] = useState([]);
+  const [countryProvidersFiltered, setCountryProvidersFiltered] = useState([]);
   const [showEmptyMessage, setShowEmptyMessage] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -121,8 +121,8 @@ const MainContainer = ({
           setLoading(false);
         });
       setStreaming([]);
-      setCountryStreaming([]);
-      setCountryStreamingFiltered([]);
+      setCountryProviders([]);
+      setCountryProvidersFiltered([]);
     }
   };
 
@@ -132,18 +132,19 @@ const MainContainer = ({
     getProvidersById(id)
       .then((response) => {
         setStreaming(response.data);
-        const countriesStreaming = getCountryStreamingFormatted(response.data);
-        const selectedCountries = getCountryListSelected(countriesStreaming, user);
+        const countriesProviders = getCountryProvidersFormatted(response.data);
+        const selectedCountries = getCountryListSelected(countriesProviders, user);
         setCountryListSelected(selectedCountries);
-        setCountryStreaming(countriesStreaming);
-        const filteredCountryStreaming = getCountryStreamingFiltered(
-          countriesStreaming,
+        setCountryProviders(countriesProviders);
+        const filteredCountryProviders = getCountryStreamingFiltered(
+          countriesProviders,
           selectedCountries,
         );
-        setCountryStreamingFiltered(filteredCountryStreaming);
-        if (filteredCountryStreaming.length !== Object.keys(selectedCountries).length) {
+        setCountryProvidersFiltered(filteredCountryProviders);
+        if (filteredCountryProviders.length !== Object.keys(selectedCountries).length) {
           setSelectAll(false);
         }
+
         setLoading(false);
         if (response.data && Object.entries(response.data.results).length === 0) {
           setShowEmptyMessage(true);
@@ -156,33 +157,31 @@ const MainContainer = ({
     setQueryResult([]);
   };
 
-  const applyCountryFilter = () => {
+  const applyCountryFilter = (selectedCountries = countryListSelected) => {
     setShowError(false);
-    const newFilteredArray = [];
-    countryStreaming.forEach((item) => {
-      if (countryListSelected[item.country]) {
-        newFilteredArray.push(item);
-      }
-    });
-    setCountryStreamingFiltered(newFilteredArray);
+    setCountryProvidersFiltered(getCountryStreamingFiltered(countryProviders, selectedCountries));
   };
 
   const onChangeCountry = (country) => {
-    countryListSelected[country] = !countryListSelected[country];
-    setCountryListSelected(countryListSelected);
-    applyCountryFilter();
+    const updatedCountryListSelected = {
+      ...countryListSelected,
+      [country]: !countryListSelected[country],
+    };
+    setCountryListSelected(updatedCountryListSelected);
+    applyCountryFilter(updatedCountryListSelected);
   };
 
   const onChangeSelectAllCountries = () => {
-    setSelectAll(!selectAll);
+    const newSelectAll = !selectAll;
+    setSelectAll(newSelectAll);
 
     const countryList = {};
-    countryStreaming.forEach((item) => {
-      countryList[item.country] = !selectAll;
+    countryProviders.forEach((item) => {
+      countryList[item.country] = newSelectAll;
     });
 
     setCountryListSelected(countryList);
-    applyCountryFilter();
+    applyCountryFilter(countryList);
   };
 
   const handleLogin = () => {
@@ -357,18 +356,18 @@ const MainContainer = ({
           </Typography>
         )}
 
-        {streaming && countryStreamingFiltered.length > 0 && (
+        {streaming && countryProviders.length > 0 && (
           <MovieStreamingDetails
             onClickShowFilters={() => setShowFilters(!showFilters)}
             showFilters={showFilters}
             selectAll={selectAll}
             onChangeSelectAllCountries={() => onChangeSelectAllCountries()}
-            countryStreaming={countryStreaming}
+            countryProviders={countryProviders}
             countryListSelected={countryListSelected}
             onClickChangeCountry={(country) => onChangeCountry(country)}
             onClickApplyCountryFilter={() => applyCountryFilter()}
             streaming={streaming}
-            countryStreamingFiltered={countryStreamingFiltered}
+            countryProvidersFiltered={countryProvidersFiltered}
             colorScheme={colorScheme}
             showWatchlistIcon={!!user && !!user.email}
             movieResult={selectedMovie}

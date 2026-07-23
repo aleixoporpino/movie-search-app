@@ -18,12 +18,12 @@ const MovieStreamingDetails = ({
   showFilters,
   selectAll,
   onChangeSelectAllCountries,
-  countryStreaming,
+  countryProviders,
   countryListSelected,
   onClickChangeCountry,
   onClickApplyCountryFilter,
   streaming,
-  countryStreamingFiltered,
+  countryProvidersFiltered,
   colorScheme,
   showWatchlistIcon,
   onSelectWatchlist,
@@ -43,6 +43,7 @@ const MovieStreamingDetails = ({
     }
     return '';
   };
+
   return (
     <Box>
       <Button
@@ -59,11 +60,12 @@ const MovieStreamingDetails = ({
           defaultSelectAll
           selectAllValue={selectAll}
           onChangeSelectAll={onChangeSelectAllCountries}
-          countryList={countryStreaming}
+          countryList={countryProviders}
           countryListSelected={countryListSelected}
           onChangeCountry={(country) => onClickChangeCountry(country)}
           onClickApplyCountryFilter={onClickApplyCountryFilter}
           colorScheme={colorScheme}
+          showApplyFilter={false}
         />
       )}
       <br />
@@ -104,13 +106,11 @@ const MovieStreamingDetails = ({
         />
       </Box>
 
-      <Grid container spacing={3} columns={{ xs: 1, sm: 8, md: 12 }} key='streamingGrid'>
-        {countryStreamingFiltered.map((countryFlatrate) => (
-          <>
-            <Grid item xs={1} sm={3} md={3} key={`flatrate-${countryFlatrate.country}`}>
-              <CountryStreamingCard countryFlatrate={countryFlatrate} colorScheme={colorScheme} />
-            </Grid>
-          </>
+      <Grid container spacing={3} columns={{ xs: 1, sm: 8, md: 12 }} key='providersGrid'>
+        {countryProvidersFiltered.map((countryItem) => (
+          <Grid item xs={1} sm={3} md={3} key={countryItem.country}>
+            <CountryStreamingCard countryProviders={countryItem} colorScheme={colorScheme} />
+          </Grid>
         ))}
       </Grid>
     </Box>
@@ -122,12 +122,12 @@ MovieStreamingDetails.propTypes = {
   showFilters: PropTypes.bool.isRequired,
   selectAll: PropTypes.bool.isRequired,
   onChangeSelectAllCountries: PropTypes.func.isRequired,
-  countryStreaming: PropTypes.arrayOf(PropTypes.object).isRequired,
+  countryProviders: PropTypes.arrayOf(PropTypes.object).isRequired,
   countryListSelected: PropTypes.object.isRequired,
   onClickChangeCountry: PropTypes.func.isRequired,
   onClickApplyCountryFilter: PropTypes.func.isRequired,
   streaming: PropTypes.object.isRequired,
-  countryStreamingFiltered: PropTypes.arrayOf(PropTypes.object).isRequired,
+  countryProvidersFiltered: PropTypes.arrayOf(PropTypes.object).isRequired,
   colorScheme: PropTypes.shape(ColorScheme).isRequired,
   showWatchlistIcon: PropTypes.bool.isRequired,
   onSelectWatchlist: PropTypes.func.isRequired,

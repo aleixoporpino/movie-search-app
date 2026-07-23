@@ -1,22 +1,26 @@
-export const getCountryStreamingFormatted = (data) => {
-  let countryIndex = 0;
-  const countryFlat = [];
+const PROVIDER_TYPES = ['flatrate', 'rent', 'buy'];
+
+export const getCountryProvidersFormatted = (data) => {
+  const countryProviders = [];
   if (data.results) {
-    Object.keys(data.results).map((country) => {
-      if (data.results[country].flatrate) {
-        countryIndex = countryFlat.length;
-        countryFlat.push({ country, streaming: [], logoPath: [] });
-        data.results[country].flatrate.map((flat) => {
-          countryFlat[countryIndex].streaming.push(flat.providerName);
-          countryFlat[countryIndex].logoPath.push(flat.logoPath);
-          return countryFlat;
-        });
+    Object.keys(data.results).forEach((country) => {
+      const countryData = data.results[country];
+      const entry = { country };
+      PROVIDER_TYPES.forEach((type) => {
+        if (countryData[type]) {
+          entry[type] = {
+            streaming: countryData[type].map((provider) => provider.providerName),
+            logoPath: countryData[type].map((provider) => provider.logoPath),
+          };
+        }
+      });
+      if (PROVIDER_TYPES.some((type) => entry[type])) {
+        countryProviders.push(entry);
       }
-      return countryFlat;
     });
   }
 
-  return countryFlat;
+  return countryProviders;
 };
 
 export const getCountryListSelected = (countryFlat, user) => {
@@ -47,7 +51,7 @@ export const getCountryListSelected = (countryFlat, user) => {
 export const getCountryStreamingFiltered = (countriesStreaming, selectedCountries) => {
   const newFilteredArray = [];
   countriesStreaming.forEach((item) => {
-    if (selectedCountries[item.country]) {
+    if (selectedCountries[item.country] !== false) {
       newFilteredArray.push(item);
     }
   });

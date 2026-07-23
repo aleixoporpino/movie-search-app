@@ -50,6 +50,7 @@ const TVShowsPage = ({ user }) => {
       colorScheme={tvShowsColors}
       saveWatchlist={saveTvShowWatchlist}
       applyWatchlist={(data) => applyWatchlistTvShows(data)}
+      mediaType='tvshow'
     />
   );
 };

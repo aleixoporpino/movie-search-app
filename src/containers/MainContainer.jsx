@@ -22,6 +22,7 @@ import MovieStreamingDetails from '../components/MovieStreamingDetails';
 import ErrorAlert from '../components/ErrorAlert';
 import WebSocketComponent from '../components/WebSocketComponent';
 import RandomQuote from '../components/RandomQuote';
+import TrendingSection from '../components/TrendingSection';
 
 const MainContainer = ({
   page,
@@ -32,6 +33,7 @@ const MainContainer = ({
   getById,
   saveWatchlist,
   applyWatchlist,
+  mediaType,
 }) => {
   const { user, setUser } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
@@ -331,6 +333,17 @@ const MainContainer = ({
           colorScheme={colorScheme}
         />
 
+        {!id && !name && (!queryResult.results || queryResult.results.length === 0) && (
+          <TrendingSection
+            mediaType={mediaType}
+            colorScheme={colorScheme}
+            onClickItem={(mediaId) => {
+              setSelectedMovie({});
+              navigate(`/${menu}/${mediaId}`);
+            }}
+          />
+        )}
+
         <Box sx={{ pt: 3 }} display='flex' justifyContent='center'>
           <Grid container spacing={{ xs: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
             {queryResult &&
@@ -389,6 +402,7 @@ MainContainer.propTypes = {
   getById: PropTypes.func.isRequired,
   saveWatchlist: PropTypes.func.isRequired,
   applyWatchlist: PropTypes.func.isRequired,
+  mediaType: PropTypes.oneOf(['movie', 'tvshow']).isRequired,
 };
 
 export default MainContainer;

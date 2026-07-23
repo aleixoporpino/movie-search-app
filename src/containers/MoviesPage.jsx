@@ -51,6 +51,7 @@ const MoviesPage = ({ user }) => {
       colorScheme={movieColors}
       saveWatchlist={saveMovieWatchlist}
       applyWatchlist={(data) => applyWatchlistMovies(data)}
+      mediaType='movie'
     />
   );
 };

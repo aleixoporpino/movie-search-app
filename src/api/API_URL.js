@@ -2,6 +2,7 @@ const movies = 'movies/';
 const tvShows = 'tv-shows/';
 const quotes = 'quotes/';
 const users = 'users/';
+const stats = 'stats/';
 
 export default {
   MOVIES: {
@@ -21,5 +22,8 @@ export default {
   },
   USERS: {
     DEFAULT: `${users}`,
+  },
+  STATS: {
+    TOP_SEARCHES: `${stats}top-searches`,
   },
 };

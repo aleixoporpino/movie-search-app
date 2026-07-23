@@ -24,6 +24,7 @@ const SearchComponent = ({ value, setValue, onSearch, loading = false, label, co
           <TextField
             name='movieName'
             fullWidth
+            variant='standard'
             id='movieName'
             label={label}
             onChange={(e) => setValue(e.target.value)}
@@ -31,6 +32,10 @@ const SearchComponent = ({ value, setValue, onSearch, loading = false, label, co
             onKeyPress={(e) => onKeyPress(e)}
             color={colorScheme.muiColor}
             disabled={loading}
+            sx={{
+              '& .MuiInputBase-input': { textAlign: 'center', fontSize: '1.4rem' },
+              '& .MuiInputLabel-root': { width: '100%', textAlign: 'center', left: 0 },
+            }}
           />
         </Grid>
 

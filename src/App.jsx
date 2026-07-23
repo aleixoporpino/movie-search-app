@@ -23,9 +23,56 @@ function App() {
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
+      background: {
+        default: '#0c0a08',
+        paper: '#17130f',
+      },
+      text: {
+        primary: '#f1e9dc',
+        secondary: '#b9ac97',
+      },
+      divider: 'rgba(215,165,68,0.16)',
+      warning: {
+        main: movieColors.active,
+        contrastText: '#0c0a08',
+      },
       secondary: {
         main: tvShowsColors.active,
         contrastText: '#000',
+      },
+    },
+    shape: {
+      borderRadius: 3,
+    },
+    typography: {
+      fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+      h1: { fontFamily: 'Iowan Old Style,Palatino Linotype,Georgia,serif' },
+      h2: { fontFamily: 'Iowan Old Style,Palatino Linotype,Georgia,serif' },
+      h3: { fontFamily: 'Iowan Old Style,Palatino Linotype,Georgia,serif' },
+      h4: { fontFamily: 'Iowan Old Style,Palatino Linotype,Georgia,serif' },
+      h5: { fontFamily: 'Iowan Old Style,Palatino Linotype,Georgia,serif' },
+      h6: { fontFamily: 'Iowan Old Style,Palatino Linotype,Georgia,serif' },
+      button: {
+        fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            letterSpacing: '0.08em',
+            fontSize: '0.75rem',
+          },
+        },
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'none',
+            border: '1px solid rgba(215,165,68,0.12)',
+            boxShadow: '0 14px 30px -14px rgba(0,0,0,0.7)',
+          },
+        },
       },
     },
   });

@@ -70,6 +70,22 @@ const MovieStreamingDetails = ({
       )}
       <br />
       <Box sx={{ pb: 2, pt: 3, textAlign: 'center' }}>
+        {movieResult.posterPath && (
+          <Box
+            component='img'
+            src={`https://image.tmdb.org/t/p/w500/${movieResult.posterPath}`}
+            alt={getName()}
+            sx={{
+              display: 'block',
+              width: '100%',
+              maxWidth: 260,
+              borderRadius: 2,
+              boxShadow: 3,
+              mb: 2,
+              mx: 'auto',
+            }}
+          />
+        )}
         <Link
           href={streaming.link}
           variant='h4'

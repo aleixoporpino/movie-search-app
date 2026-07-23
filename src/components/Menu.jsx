@@ -26,16 +26,22 @@ const Menu = ({
   const activeMenu = {
     color: colorScheme.active,
     textDecoration: 'none',
+    borderBottom: `1px solid ${colorScheme.active}`,
     cursor: 'default',
-    textDecorationThickness: 'from-font',
-    fontSize: '1.5rem',
+    fontSize: '0.85rem',
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    paddingBottom: '6px',
   };
   const inactiveMenu = {
-    color: colorScheme.inactive,
-    textDecoration: 'underline',
+    color: '#7d715d',
+    textDecoration: 'none',
+    borderBottom: '1px solid transparent',
     cursor: 'pointer',
-    textDecorationThickness: 'from-font',
-    fontSize: '1.5rem',
+    fontSize: '0.85rem',
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    paddingBottom: '6px',
   };
 
   return (
@@ -52,7 +58,7 @@ const Menu = ({
         >
           Movies
         </Link>{' '}
-        <span style={{ fontSize: '1.5rem' }}>{' | '}</span>
+        <span style={{ fontSize: '0.85rem', color: '#7d715d' }}>{' | '}</span>
         <Link
           to={linkTvShows}
           style={menu === 'tv-shows' ? { ...activeMenu } : { ...inactiveMenu }}

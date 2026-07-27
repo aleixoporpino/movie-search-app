@@ -74,6 +74,7 @@ const Menu = ({
           handleProfile={handleProfile}
           handleLogout={handleLogout}
           handleWatchlist={handleWatchlist}
+          colorScheme={colorScheme}
         />
       ) : (
         <Tooltip title='Login with google'>

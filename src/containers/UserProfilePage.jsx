@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FormControl, FormGroup } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import { QuestionMark } from '@mui/icons-material';
+import { ArrowBackIosNew, FavoriteBorder, InfoOutlined } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -121,56 +122,87 @@ const UserProfilePage = () => {
         <meta name='robots' content='noindex' />
       </Helmet>
       {user && user.email ? (
-        <FormControl>
-          <Box>
-            <Button variant='outlined' onClick={() => navigate('/movies')} size='medium'>
-              HOME
+        <FormControl sx={{ width: '100%' }}>
+          <Box
+            sx={{ pt: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          >
+            <Button
+              variant='text'
+              onClick={() => navigate('/movies')}
+              size='medium'
+              startIcon={<ArrowBackIosNew sx={{ fontSize: '0.8rem' }} />}
+              sx={{ color: 'text.secondary' }}
+            >
+              Home
+            </Button>
+            <Button
+              variant='outlined'
+              onClick={() => navigate('/watchlist')}
+              size='medium'
+              startIcon={<FavoriteBorder sx={{ fontSize: '1rem' }} />}
+            >
+              Watchlist
             </Button>
           </Box>
+
           <Box
-            display='flex'
             sx={{
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pt: 6,
+              mt: 3,
+              borderRadius: 1,
+              p: { xs: 3, sm: 4 },
+              textAlign: 'center',
+              background: 'linear-gradient(160deg, rgba(215,165,68,0.16) 0%, rgba(23,19,15,0) 70%)',
+              border: '1px solid rgba(215,165,68,0.12)',
             }}
           >
-            <Avatar alt='your profile avatar' src={user.avatarURL} sx={{ width: 80, height: 80 }} />
-            <Typography variant='h5' component='div'>
+            <Avatar
+              alt='your profile avatar'
+              src={user.avatarURL}
+              sx={{
+                width: 84,
+                height: 84,
+                mx: 'auto',
+                border: '2px solid rgba(215,165,68,0.35)',
+              }}
+            />
+            <Typography variant='h6' component='div' sx={{ pt: 2 }}>
+              {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.email}
+            </Typography>
+            <Typography variant='body2' color='text.secondary'>
               {user.email}
             </Typography>
           </Box>
-          <Typography variant='h5' sx={{ pb: 2, pt: 10 }}>
-            User Profile
-          </Typography>
 
-          <TextField
-            id='firstName'
-            label='First Name'
-            value={userForm.firstName}
-            onChange={onChangeText}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            id='lastName'
-            label='Last Name'
-            value={userForm.lastName}
-            onChange={onChangeText}
-            sx={{ mb: 2 }}
-          />
-          <Box sx={{ pt: 5 }}>
-            <Tooltip
-              title='will notify by email when movies you watchlisted are available for
-              the following configuration'
-            >
-              <Typography variant='h5' sx={{ pb: 2 }}>
-                Watchlist Configuration
-                <IconButton aria-label='question-mark' disabled color='primary'>
-                  <QuestionMark />
+          <Card sx={{ mt: 5, p: { xs: 2.5, sm: 3 } }}>
+            <Typography variant='h6' sx={{ pb: 2.5 }}>
+              Account Details
+            </Typography>
+            <TextField
+              id='firstName'
+              label='First Name'
+              value={userForm.firstName}
+              onChange={onChangeText}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              id='lastName'
+              label='Last Name'
+              value={userForm.lastName}
+              onChange={onChangeText}
+              fullWidth
+            />
+          </Card>
+
+          <Card sx={{ mt: 3, p: { xs: 2.5, sm: 3 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 0.5 }}>
+              <Typography variant='h6'>Watchlist Configuration</Typography>
+              <Tooltip title='Will notify by email when movies you watchlisted are available for the following configuration'>
+                <IconButton aria-label='watchlist configuration info' size='small' color='primary'>
+                  <InfoOutlined fontSize='small' />
                 </IconButton>
-              </Typography>
-            </Tooltip>
+              </Tooltip>
+            </Box>
 
             <FormGroup sx={{ mb: 3 }}>
               <FormControlLabel
@@ -194,7 +226,7 @@ const UserProfilePage = () => {
             </FormGroup>
             {countries.length > 0 ? (
               <>
-                <Typography>Preferred Countries:</Typography>
+                <Typography sx={{ pb: 1 }}>Preferred Countries:</Typography>
                 <CountryFilter
                   selectAllValue={false}
                   onChangeSelectAll={() => {}}
@@ -209,8 +241,9 @@ const UserProfilePage = () => {
             ) : (
               <></>
             )}
-          </Box>
-          <Box sx={{ mt: 3, mb: 5, textAlign: 'center' }}>
+          </Card>
+
+          <Box sx={{ mt: 4, mb: 5, textAlign: 'center' }}>
             <Button variant='contained' onClick={onClickSave} size='large' color='secondary'>
               SAVE CHANGES
             </Button>

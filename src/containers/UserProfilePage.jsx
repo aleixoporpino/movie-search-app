@@ -19,11 +19,19 @@ import { tvShowsColors } from '../utils/colorScheme';
 import CountryCodeEnum from '../utils/CountryCodeEnum';
 import { API_URL } from '../../app.properties';
 import { saveUser } from '../api/userApi';
+import {
+  disablePushNotifications,
+  enablePushNotifications,
+  getExistingPushSubscription,
+  isPushSupported,
+} from '../utils/pushNotifications';
 
 const UserProfilePage = () => {
   const { user, setUser } = useContext(UserContext);
   const [countries, setCountries] = useState([]);
   const [countryListSelected, setCountryListSelected] = useState({});
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushError, setPushError] = useState('');
   const navigate = useNavigate();
   const [userForm, setUserForm] = useState({
     firstName: '',
@@ -33,6 +41,28 @@ const UserProfilePage = () => {
     streaming: false,
     countries: [],
   });
+
+  useEffect(() => {
+    if (!isPushSupported()) return;
+    getExistingPushSubscription()
+      .then((subscription) => setPushEnabled(!!subscription))
+      .catch(() => {});
+  }, []);
+
+  const onChangePushEnabled = async (e) => {
+    const { checked } = e.target;
+    setPushError('');
+    try {
+      if (checked) {
+        await enablePushNotifications();
+      } else {
+        await disablePushNotifications();
+      }
+      setPushEnabled(checked);
+    } catch (err) {
+      setPushError(err.message || 'Failed to update push notification settings');
+    }
+  };
 
   useEffect(() => {
     if (!localStorage.getItem('token')) {
@@ -223,6 +253,21 @@ const UserProfilePage = () => {
                 }
                 label='Notify for Streaming'
               />
+              {isPushSupported() ? (
+                <FormControlLabel
+                  control={<Checkbox checked={pushEnabled} onChange={onChangePushEnabled} />}
+                  label='Enable browser push notifications'
+                />
+              ) : (
+                <></>
+              )}
+              {pushError ? (
+                <Typography variant='body2' color='error' sx={{ mt: 1 }}>
+                  {pushError}
+                </Typography>
+              ) : (
+                <></>
+              )}
             </FormGroup>
             {countries.length > 0 ? (
               <>

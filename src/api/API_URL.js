@@ -3,6 +3,7 @@ const tvShows = 'tv-shows/';
 const quotes = 'quotes/';
 const users = 'users/';
 const stats = 'stats/';
+const push = 'push/';
 
 export default {
   MOVIES: {
@@ -25,5 +26,10 @@ export default {
   },
   STATS: {
     TOP_SEARCHES: `${stats}top-searches`,
+  },
+  PUSH: {
+    VAPID_PUBLIC_KEY: `${push}vapid-public-key`,
+    SUBSCRIBE: `${push}subscribe`,
+    UNSUBSCRIBE: `${push}unsubscribe`,
   },
 };

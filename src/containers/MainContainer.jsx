@@ -12,6 +12,9 @@ import {
   getCountryListSelected,
   getCountryStreamingFiltered,
   getCountryProvidersFormatted,
+  getProvidersListFormatted,
+  getProviderListSelected,
+  getProviderStreamingFiltered,
 } from '../utils';
 import Menu from '../components/Menu';
 import { MenuContext } from '../contexts/MenuContext';
@@ -40,6 +43,9 @@ const MainContainer = ({
   const { menu, setMenu } = useContext(MenuContext);
   const [selectAll, setSelectAll] = useState(true);
   const [countryListSelected, setCountryListSelected] = useState([]);
+  const [selectAllProviders, setSelectAllProviders] = useState(true);
+  const [providersList, setProvidersList] = useState([]);
+  const [providerListSelected, setProviderListSelected] = useState([]);
   const [name, setName] = useState('');
   const [selectedMovie, setSelectedMovie] = useState({});
   const [queryResult, setQueryResult] = useState([]);
@@ -48,7 +54,8 @@ const MainContainer = ({
   const [countryProvidersFiltered, setCountryProvidersFiltered] = useState([]);
   const [showEmptyMessage, setShowEmptyMessage] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showCountryFilters, setShowCountryFilters] = useState(false);
+  const [showProviderFilters, setShowProviderFilters] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -125,6 +132,7 @@ const MainContainer = ({
       setStreaming([]);
       setCountryProviders([]);
       setCountryProvidersFiltered([]);
+      setProvidersList([]);
     }
   };
 
@@ -138,13 +146,22 @@ const MainContainer = ({
         const selectedCountries = getCountryListSelected(countriesProviders, user);
         setCountryListSelected(selectedCountries);
         setCountryProviders(countriesProviders);
-        const filteredCountryProviders = getCountryStreamingFiltered(
-          countriesProviders,
-          selectedCountries,
+
+        const providers = getProvidersListFormatted(countriesProviders);
+        const selectedProviders = getProviderListSelected(providers, user);
+        setProvidersList(providers);
+        setProviderListSelected(selectedProviders);
+
+        const filteredCountryProviders = getProviderStreamingFiltered(
+          getCountryStreamingFiltered(countriesProviders, selectedCountries),
+          selectedProviders,
         );
         setCountryProvidersFiltered(filteredCountryProviders);
         if (filteredCountryProviders.length !== Object.keys(selectedCountries).length) {
           setSelectAll(false);
+        }
+        if (providers.some((provider) => selectedProviders[provider] === false)) {
+          setSelectAllProviders(false);
         }
 
         setLoading(false);
@@ -159,9 +176,17 @@ const MainContainer = ({
     setQueryResult([]);
   };
 
-  const applyCountryFilter = (selectedCountries = countryListSelected) => {
+  const applyFilters = (
+    selectedCountries = countryListSelected,
+    selectedProviders = providerListSelected,
+  ) => {
     setShowError(false);
-    setCountryProvidersFiltered(getCountryStreamingFiltered(countryProviders, selectedCountries));
+    setCountryProvidersFiltered(
+      getProviderStreamingFiltered(
+        getCountryStreamingFiltered(countryProviders, selectedCountries),
+        selectedProviders,
+      ),
+    );
   };
 
   const onChangeCountry = (country) => {
@@ -170,7 +195,7 @@ const MainContainer = ({
       [country]: !countryListSelected[country],
     };
     setCountryListSelected(updatedCountryListSelected);
-    applyCountryFilter(updatedCountryListSelected);
+    applyFilters(updatedCountryListSelected, providerListSelected);
   };
 
   const onChangeSelectAllCountries = () => {
@@ -183,7 +208,29 @@ const MainContainer = ({
     });
 
     setCountryListSelected(countryList);
-    applyCountryFilter(countryList);
+    applyFilters(countryList, providerListSelected);
+  };
+
+  const onChangeProvider = (provider) => {
+    const updatedProviderListSelected = {
+      ...providerListSelected,
+      [provider]: !providerListSelected[provider],
+    };
+    setProviderListSelected(updatedProviderListSelected);
+    applyFilters(countryListSelected, updatedProviderListSelected);
+  };
+
+  const onChangeSelectAllProviders = () => {
+    const newSelectAllProviders = !selectAllProviders;
+    setSelectAllProviders(newSelectAllProviders);
+
+    const providerList = {};
+    providersList.forEach((provider) => {
+      providerList[provider] = newSelectAllProviders;
+    });
+
+    setProviderListSelected(providerList);
+    applyFilters(countryListSelected, providerList);
   };
 
   const handleLogin = () => {
@@ -371,14 +418,21 @@ const MainContainer = ({
 
         {streaming && countryProviders.length > 0 && (
           <MovieStreamingDetails
-            onClickShowFilters={() => setShowFilters(!showFilters)}
-            showFilters={showFilters}
+            onClickShowCountryFilters={() => setShowCountryFilters(!showCountryFilters)}
+            showCountryFilters={showCountryFilters}
             selectAll={selectAll}
             onChangeSelectAllCountries={() => onChangeSelectAllCountries()}
             countryProviders={countryProviders}
             countryListSelected={countryListSelected}
             onClickChangeCountry={(country) => onChangeCountry(country)}
-            onClickApplyCountryFilter={() => applyCountryFilter()}
+            onClickApplyCountryFilter={() => applyFilters()}
+            onClickShowProviderFilters={() => setShowProviderFilters(!showProviderFilters)}
+            showProviderFilters={showProviderFilters}
+            selectAllProviders={selectAllProviders}
+            onChangeSelectAllProviders={() => onChangeSelectAllProviders()}
+            providersList={providersList}
+            providerListSelected={providerListSelected}
+            onClickChangeProvider={(provider) => onChangeProvider(provider)}
             streaming={streaming}
             countryProvidersFiltered={countryProvidersFiltered}
             colorScheme={colorScheme}

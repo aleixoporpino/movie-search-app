@@ -9,19 +9,27 @@ import Checkbox from '@mui/material/Checkbox';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import CountryStreamingCard from './CountryStreamingCard';
 import CountryFilter from './CountryFilter';
+import ProviderFilter from './ProviderFilter';
 import { ColorScheme } from '../shapes/MemberShape';
 import UserScore from './UserScore';
 import { MovieResultShape } from '../shapes/MovieResultShape';
 
 const MovieStreamingDetails = ({
-  onClickShowFilters,
-  showFilters,
+  onClickShowCountryFilters,
+  showCountryFilters,
   selectAll,
   onChangeSelectAllCountries,
   countryProviders,
   countryListSelected,
   onClickChangeCountry,
   onClickApplyCountryFilter,
+  onClickShowProviderFilters,
+  showProviderFilters,
+  selectAllProviders,
+  onChangeSelectAllProviders,
+  providersList,
+  providerListSelected,
+  onClickChangeProvider,
   streaming,
   countryProvidersFiltered,
   colorScheme,
@@ -46,16 +54,25 @@ const MovieStreamingDetails = ({
 
   return (
     <Box>
-      <Button
-        size='small'
-        variant='outlined'
-        onClick={onClickShowFilters}
-        color={colorScheme.muiColor}
-        sx={{ mb: 1 }}
-      >
-        {showFilters ? 'Hide filters' : 'Show filters'}
-      </Button>
-      {showFilters && (
+      <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+        <Button
+          size='small'
+          variant='outlined'
+          onClick={onClickShowCountryFilters}
+          color={colorScheme.muiColor}
+        >
+          {showCountryFilters ? 'Hide Country Filter' : 'Show Country Filter'}
+        </Button>
+        <Button
+          size='small'
+          variant='outlined'
+          onClick={onClickShowProviderFilters}
+          color={colorScheme.muiColor}
+        >
+          {showProviderFilters ? 'Hide Provider Filter' : 'Show Provider Filter'}
+        </Button>
+      </Box>
+      {showCountryFilters && (
         <CountryFilter
           defaultSelectAll
           selectAllValue={selectAll}
@@ -66,6 +83,16 @@ const MovieStreamingDetails = ({
           onClickApplyCountryFilter={onClickApplyCountryFilter}
           colorScheme={colorScheme}
           showApplyFilter={false}
+        />
+      )}
+      {showProviderFilters && (
+        <ProviderFilter
+          showSelectAll
+          selectAllValue={selectAllProviders}
+          onChangeSelectAll={onChangeSelectAllProviders}
+          providerList={providersList}
+          providerListSelected={providerListSelected}
+          onChangeProvider={(provider) => onClickChangeProvider(provider)}
         />
       )}
       <br />
@@ -134,14 +161,21 @@ const MovieStreamingDetails = ({
 };
 
 MovieStreamingDetails.propTypes = {
-  onClickShowFilters: PropTypes.func.isRequired,
-  showFilters: PropTypes.bool.isRequired,
+  onClickShowCountryFilters: PropTypes.func.isRequired,
+  showCountryFilters: PropTypes.bool.isRequired,
   selectAll: PropTypes.bool.isRequired,
   onChangeSelectAllCountries: PropTypes.func.isRequired,
   countryProviders: PropTypes.arrayOf(PropTypes.object).isRequired,
   countryListSelected: PropTypes.object.isRequired,
   onClickChangeCountry: PropTypes.func.isRequired,
   onClickApplyCountryFilter: PropTypes.func.isRequired,
+  onClickShowProviderFilters: PropTypes.func.isRequired,
+  showProviderFilters: PropTypes.bool.isRequired,
+  selectAllProviders: PropTypes.bool.isRequired,
+  onChangeSelectAllProviders: PropTypes.func.isRequired,
+  providersList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  providerListSelected: PropTypes.object.isRequired,
+  onClickChangeProvider: PropTypes.func.isRequired,
   streaming: PropTypes.object.isRequired,
   countryProvidersFiltered: PropTypes.arrayOf(PropTypes.object).isRequired,
   colorScheme: PropTypes.shape(ColorScheme).isRequired,

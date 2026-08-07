@@ -52,30 +52,30 @@ const MovieCard = ({ movieResult, onClickMovieTitle, onSelectWatchlist, showWatc
           {movieResult.originalTitle}
         </Typography>
       </Box>
+
+      <Box sx={{ p: 2, pt: 1.5 }}>
+        <Typography variant='body2' color='text.secondary'>
+          {movieResult.overview}
+        </Typography>
+      </Box>
     </CardActionArea>
 
-    <Box sx={{ p: 2, pt: 1.5 }}>
-      <Typography variant='body2' color='text.secondary'>
-        {movieResult.overview}
-      </Typography>
-
-      {showWatchlistIcon ? (
-        <Box sx={{ textAlign: 'center', mt: 1 }}>
-          <Tooltip title='Add to watchlist and receive notification when available according with your preferences'>
-            <Checkbox
-              icon={<FavoriteBorder />}
-              checkedIcon={<Favorite />}
-              color='error'
-              onChange={onSelectWatchlist}
-              checked={movieResult.watchlist}
-              sx={{ '& .MuiSvgIcon-root': { fontSize: 35 } }}
-            />
-          </Tooltip>
-        </Box>
-      ) : (
-        <></>
-      )}
-    </Box>
+    {showWatchlistIcon ? (
+      <Box sx={{ textAlign: 'center', pb: 2 }}>
+        <Tooltip title='Add to watchlist and receive notification when available according with your preferences'>
+          <Checkbox
+            icon={<FavoriteBorder />}
+            checkedIcon={<Favorite />}
+            color='error'
+            onChange={onSelectWatchlist}
+            checked={movieResult.watchlist}
+            sx={{ '& .MuiSvgIcon-root': { fontSize: 35 } }}
+          />
+        </Tooltip>
+      </Box>
+    ) : (
+      <></>
+    )}
   </Card>
 );
 

@@ -15,10 +15,13 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { UserContext } from '../contexts/UserContext';
 import CountryFilter from '../components/CountryFilter';
+import ProviderFilter from '../components/ProviderFilter';
 import { tvShowsColors } from '../utils/colorScheme';
 import CountryCodeEnum from '../utils/CountryCodeEnum';
+import ProviderEnum from '../utils/ProviderEnum';
 import { API_URL } from '../../app.properties';
 import { saveUser } from '../api/userApi';
+import { resubscribeEmail, unsubscribeEmail } from '../api/emailApi';
 import {
   disablePushNotifications,
   enablePushNotifications,
@@ -30,8 +33,11 @@ const UserProfilePage = () => {
   const { user, setUser } = useContext(UserContext);
   const [countries, setCountries] = useState([]);
   const [countryListSelected, setCountryListSelected] = useState({});
+  const [providerListSelected, setProviderListSelected] = useState({});
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushError, setPushError] = useState('');
+  const [emailNotificationsDisabled, setEmailNotificationsDisabled] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const navigate = useNavigate();
   const [userForm, setUserForm] = useState({
     firstName: '',
@@ -40,6 +46,7 @@ const UserProfilePage = () => {
     rent: false,
     streaming: false,
     countries: [],
+    providers: [],
   });
 
   useEffect(() => {
@@ -64,6 +71,23 @@ const UserProfilePage = () => {
     }
   };
 
+  const onChangeEmailNotificationsEnabled = async (e) => {
+    const { checked } = e.target;
+    const previouslyDisabled = emailNotificationsDisabled;
+    setEmailError('');
+    setEmailNotificationsDisabled(!checked);
+    try {
+      if (checked) {
+        await resubscribeEmail();
+      } else {
+        await unsubscribeEmail();
+      }
+    } catch (err) {
+      setEmailNotificationsDisabled(previouslyDisabled);
+      setEmailError(err.message || 'Failed to update email notification settings');
+    }
+  };
+
   useEffect(() => {
     if (!localStorage.getItem('token')) {
       const apiUrl = `${API_URL}auth/google?token=${localStorage.getItem('token')}`;
@@ -72,6 +96,7 @@ const UserProfilePage = () => {
     }
 
     if (!userForm.email && user && user.email) {
+      setEmailNotificationsDisabled(!!user.emailNotificationsDisabled);
       setUserForm((prevState) => ({
         ...prevState,
         firstName: user.firstName,
@@ -83,6 +108,10 @@ const UserProfilePage = () => {
         countries:
           user.watchlist.countries && user.watchlist.countries.length > 0
             ? user.watchlist.countries
+            : [],
+        providers:
+          user.watchlist.providers && user.watchlist.providers.length > 0
+            ? user.watchlist.providers
             : [],
       }));
 
@@ -98,10 +127,23 @@ const UserProfilePage = () => {
         });
         setCountryListSelected((prevState) => ({ ...prevState, ...countryList }));
       }
+
+      if (
+        Object.keys(providerListSelected).length === 0 &&
+        user.watchlist &&
+        user.watchlist.providers &&
+        user.watchlist.providers.length > 0
+      ) {
+        const providerList = {};
+        user.watchlist.providers.forEach((v) => {
+          providerList[v] = true;
+        });
+        setProviderListSelected((prevState) => ({ ...prevState, ...providerList }));
+      }
     }
 
     setCountries(Object.keys(CountryCodeEnum).map((it) => ({ country: it })));
-  }, [countryListSelected, user, userForm]);
+  }, [countryListSelected, providerListSelected, user, userForm]);
 
   const onChangeText = (e) => {
     userForm[e.target.id] = e.target.value;
@@ -131,6 +173,17 @@ const UserProfilePage = () => {
 
     const updatedUserForm = { ...userForm };
     updatedUserForm.countries = selectedCountries;
+    setUserForm(updatedUserForm);
+  };
+
+  const onChangeProvider = (provider) => {
+    const newProviderListSelected = { ...providerListSelected };
+    newProviderListSelected[provider] = !newProviderListSelected[provider];
+    setProviderListSelected(newProviderListSelected);
+    const selectedProviders = ProviderEnum.filter((item) => newProviderListSelected[item]);
+
+    const updatedUserForm = { ...userForm };
+    updatedUserForm.providers = selectedProviders;
     setUserForm(updatedUserForm);
   };
 
@@ -268,6 +321,22 @@ const UserProfilePage = () => {
               ) : (
                 <></>
               )}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!emailNotificationsDisabled}
+                    onChange={onChangeEmailNotificationsEnabled}
+                  />
+                }
+                label='Enable email notifications'
+              />
+              {emailError ? (
+                <Typography variant='body2' color='error' sx={{ mt: 1 }}>
+                  {emailError}
+                </Typography>
+              ) : (
+                <></>
+              )}
             </FormGroup>
             {countries.length > 0 ? (
               <>
@@ -286,6 +355,12 @@ const UserProfilePage = () => {
             ) : (
               <></>
             )}
+            <Typography sx={{ pb: 1, pt: 2 }}>Preferred Providers:</Typography>
+            <ProviderFilter
+              providerList={ProviderEnum}
+              providerListSelected={providerListSelected}
+              onChangeProvider={onChangeProvider}
+            />
           </Card>
 
           <Box sx={{ mt: 4, mb: 5, textAlign: 'center' }}>

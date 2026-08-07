@@ -5,6 +5,7 @@ export const WatchlistShape = {
   buy: PropTypes.bool.isRequired,
   countries: PropTypes.arrayOf(PropTypes.string),
   movies: PropTypes.arrayOf(shape(MediaShape)),
+  providers: PropTypes.arrayOf(PropTypes.string),
   rent: PropTypes.bool.isRequired,
   streaming: PropTypes.bool.isRequired,
   tvShows: PropTypes.arrayOf(shape(MediaShape)),

@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { ArrowBackIosNew, FavoriteBorder, PersonOutline } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
@@ -25,7 +27,18 @@ const WatchlistPage = ({ colorScheme, page }) => {
   const [removingIds, setRemovingIds] = useState([]);
   const [showError, setShowError] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showUnsubscribed, setShowUnsubscribed] = useState(false);
   const label = page === 'movies' ? 'movie' : 'TV show';
+
+  useEffect(() => {
+    if (searchParams.get('unsubscribed') === 'true') {
+      setShowUnsubscribed(true);
+      searchParams.delete('unsubscribed');
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (page === 'movies') {
@@ -120,6 +133,22 @@ const WatchlistPage = ({ colorScheme, page }) => {
         colorScheme={colorScheme}
       />
       <ErrorAlert showError={showError} onClose={() => setShowError(false)} />
+      <Snackbar
+        open={showUnsubscribed}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setShowUnsubscribed(false)}
+        autoHideDuration={8000}
+      >
+        <Alert
+          onClose={() => setShowUnsubscribed(false)}
+          severity='info'
+          variant='filled'
+          sx={{ width: '100%' }}
+        >
+          You&apos;ve been unsubscribed from watchlist emails. You can turn them back on in
+          settings.
+        </Alert>
+      </Snackbar>
       {media.length === 0 ? (
         <Box
           display='flex'

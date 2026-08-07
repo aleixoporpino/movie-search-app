@@ -4,6 +4,7 @@ const quotes = 'quotes/';
 const users = 'users/';
 const stats = 'stats/';
 const push = 'push/';
+const email = 'email/';
 
 export default {
   MOVIES: {
@@ -31,5 +32,9 @@ export default {
     VAPID_PUBLIC_KEY: `${push}vapid-public-key`,
     SUBSCRIBE: `${push}subscribe`,
     UNSUBSCRIBE: `${push}unsubscribe`,
+  },
+  EMAIL: {
+    UNSUBSCRIBE: `${email}unsubscribe`,
+    RESUBSCRIBE: `${email}resubscribe`,
   },
 };

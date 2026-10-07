@@ -63,8 +63,12 @@ const MainContainer = ({
   useEffect(() => {
     const locationPathArr = location.pathname.split('/');
 
-    if (location.search && location.search.includes('token=')) {
-      const token = location.search.split('token=')[1];
+    // The API redirects with the token in the URL fragment (#token=...); the
+    // query form is still accepted for older redirects.
+    const tokenSource = [location.hash.replace(/^#/, ''), location.search.replace(/^\?/, '')]
+      .find((part) => part.includes('token='));
+    if (tokenSource) {
+      const token = new URLSearchParams(tokenSource).get('token');
       localStorage.setItem('token', token);
       window.location.href = '/movies';
       navigate('/movies');

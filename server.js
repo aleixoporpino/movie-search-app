@@ -3,9 +3,11 @@ const path = require('path');
 const express = require('express');
 const { fetchTitle, renderTitlePage, buildSitemap } = require('./seo');
 const { securityHeaders } = require('./security');
+const { redirectWwwToApex } = require('./canonicalHost');
 
 const app = express();
 app.disable('x-powered-by');
+app.use(redirectWwwToApex);
 app.use(securityHeaders());
 
 const KNOWN_ROUTES = [

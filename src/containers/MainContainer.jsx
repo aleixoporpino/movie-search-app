@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Helmet } from 'react-helmet-async';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import NoStreamingInfo from '../components/NoStreamingInfo';
 import { LoadingContext } from '../contexts/LoadingContext';
 import SearchComponent from '../components/SearchComponent';
 import MovieCard from '../components/MovieCard';
@@ -415,7 +416,10 @@ const MainContainer = ({
               ))}
           </Grid>
         </Box>
-        {showEmptyMessage && (
+        {showEmptyMessage && id && selectedMovie.id && (
+          <NoStreamingInfo movieResult={selectedMovie} colorScheme={colorScheme} />
+        )}
+        {showEmptyMessage && !(id && selectedMovie.id) && (
           <Typography variant='h6' color={colorScheme.muiColor}>
             Nothing was found 😞.
           </Typography>

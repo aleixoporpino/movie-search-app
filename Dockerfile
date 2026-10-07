@@ -1,4 +1,4 @@
-FROM debian:bullseye as builder
+FROM debian:bookworm as builder
 
 ARG NODE_VERSION=16.14.0
 ARG YARN_VERSION=1.22.17
@@ -23,7 +23,7 @@ ENV NODE_ENV production
 COPY . .
 
 RUN yarn install && yarn run build
-FROM debian:bullseye
+FROM debian:bookworm
 
 LABEL fly_launch_runtime="nodejs"
 

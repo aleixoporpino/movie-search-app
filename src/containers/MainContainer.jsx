@@ -65,8 +65,9 @@ const MainContainer = ({
 
     // The API redirects with the token in the URL fragment (#token=...); the
     // query form is still accepted for older redirects.
-    const tokenSource = [location.hash.replace(/^#/, ''), location.search.replace(/^\?/, '')]
-      .find((part) => part.includes('token='));
+    const tokenSource = [location.hash.replace(/^#/, ''), location.search.replace(/^\?/, '')].find(
+      (part) => part.includes('token='),
+    );
     if (tokenSource) {
       const token = new URLSearchParams(tokenSource).get('token');
       localStorage.setItem('token', token);

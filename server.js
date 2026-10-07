@@ -2,8 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const { fetchTitle, renderTitlePage, buildSitemap } = require('./seo');
+const { securityHeaders } = require('./security');
 
 const app = express();
+app.disable('x-powered-by');
+app.use(securityHeaders());
 
 const KNOWN_ROUTES = [
   /^\/$/,

@@ -3,4 +3,4 @@ Allow: /
 Disallow: /profile
 Disallow: /watchlist
 
-Sitemap: https://movie-search-app.fly.dev/sitemap.xml
+Sitemap: https://findmovies.ca/sitemap.xml

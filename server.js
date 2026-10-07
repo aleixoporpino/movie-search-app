@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const { fetchTitle, renderTitlePage } = require('./seo');
+const { fetchTitle, renderTitlePage, buildSitemap } = require('./seo');
 
 const app = express();
 
@@ -31,6 +31,17 @@ const getIndexTemplate = () => {
 // Hashed bundles never change, so cache them for good; everything else (index.html,
 // icons, robots.txt, service-worker.js) is revalidated so a deploy shows up right away.
 const HASHED_ASSET = /\.[0-9a-f]{16,}\.(js|css)(\.map)?$/;
+
+// Lists the most-searched titles on top of the static pages. If the API is
+// unreachable this falls through to the static sitemap.xml in the build.
+app.get('/sitemap.xml', async (req, res, next) => {
+  const xml = await buildSitemap();
+  if (!xml) {
+    next();
+    return;
+  }
+  res.set('Cache-Control', 'public, max-age=3600').type('application/xml').send(xml);
+});
 
 app.use(
   express.static(BUILD_DIR, {

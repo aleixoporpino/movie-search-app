@@ -128,4 +128,47 @@ const renderTitlePage = (template, kind, data, pathname) => {
     );
 };
 
-module.exports = { fetchTitle, renderTitlePage };
+const STATIC_PATHS = ['/', '/movies', '/tv-shows'];
+const TOP_SEARCH_PERIODS = ['year', 'month'];
+const TOP_SEARCH_LIMIT = 50;
+const SITEMAP_TTL_MS = 60 * 60 * 1000;
+
+let sitemapCache = { xml: null, expires: 0 };
+
+// Returns sitemap XML listing the static pages plus the most-searched titles,
+// or null when the API can't be reached (callers serve the static file).
+const buildSitemap = async () => {
+  if (sitemapCache.xml && sitemapCache.expires > Date.now()) {
+    return sitemapCache.xml;
+  }
+
+  const kinds = [
+    { mediaType: 'movie', prefix: '/movies' },
+    { mediaType: 'tvshow', prefix: '/tv-shows' },
+  ];
+  const requests = kinds.flatMap(({ mediaType, prefix }) =>
+    TOP_SEARCH_PERIODS.map((period) =>
+      getJson(
+        `stats/top-searches?mediaType=${mediaType}&period=${period}&limit=${TOP_SEARCH_LIMIT}`,
+      ).then((rows) => rows.map((row) => `${prefix}/${row.mediaId}`)),
+    ),
+  );
+
+  let titlePaths;
+  try {
+    titlePaths = (await Promise.all(requests)).flat();
+  } catch (e) {
+    return null;
+  }
+
+  const paths = [...new Set([...STATIC_PATHS, ...titlePaths])];
+  const entries = paths
+    .map((p) => `  <url>\n    <loc>${escapeHtml(SITE_URL + (p === '/' ? '/' : p))}</loc>\n  </url>`)
+    .join('\n');
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`;
+
+  sitemapCache = { xml, expires: Date.now() + SITEMAP_TTL_MS };
+  return xml;
+};
+
+module.exports = { fetchTitle, renderTitlePage, buildSitemap };

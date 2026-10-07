@@ -1,6 +1,6 @@
 FROM debian:bookworm as builder
 
-ARG NODE_VERSION=16.14.0
+ARG NODE_VERSION=22
 ARG YARN_VERSION=1.22.17
 
 RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential

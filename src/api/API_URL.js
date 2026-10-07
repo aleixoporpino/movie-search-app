@@ -5,6 +5,7 @@ const users = 'users/';
 const stats = 'stats/';
 const push = 'push/';
 const email = 'email/';
+const status = 'status';
 
 export default {
   MOVIES: {
@@ -24,6 +25,9 @@ export default {
   },
   USERS: {
     DEFAULT: `${users}`,
+  },
+  STATUS: {
+    DEFAULT: status,
   },
   STATS: {
     TOP_SEARCHES: `${stats}top-searches`,

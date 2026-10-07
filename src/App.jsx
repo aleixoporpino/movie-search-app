@@ -15,6 +15,7 @@ import { getUser } from './api/userApi';
 import UserProfilePage from './containers/UserProfilePage';
 import WatchlistPage from './containers/WatchlistPage';
 import AddToHomeScreenTip from './components/AddToHomeScreenTip';
+import TmdbStatusBanner from './components/TmdbStatusBanner';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -102,6 +103,7 @@ function App() {
             <CssBaseline />
             <AddToHomeScreenTip />
             <Container sx={{ position: 'relative', minHeight: '100vh' }}>
+              <TmdbStatusBanner />
               <Router>
                 <Routes>
                   <Route exact path='/' element={<MoviesPage />} />

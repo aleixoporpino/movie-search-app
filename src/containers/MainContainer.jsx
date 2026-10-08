@@ -241,7 +241,7 @@ const MainContainer = ({
 
   const handleLogin = () => {
     // TODO: use some sort of env here
-    const apiUrl = `${API_URL}auth/google?token=${localStorage.getItem('token')}`;
+    const apiUrl = `${API_URL}auth/google`;
     window.location.href = apiUrl || `${window.location.origin}/${apiUrl}`;
   };
 

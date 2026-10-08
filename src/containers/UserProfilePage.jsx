@@ -90,7 +90,7 @@ const UserProfilePage = () => {
 
   useEffect(() => {
     if (!localStorage.getItem('token')) {
-      const apiUrl = `${API_URL}auth/google?token=${localStorage.getItem('token')}`;
+      const apiUrl = `${API_URL}auth/google`;
       window.location.href = apiUrl || `${window.location.origin}/${apiUrl}`;
       return;
     }
